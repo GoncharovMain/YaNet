@@ -1,5 +1,7 @@
-﻿namespace YaNet.Test;
-public class Class1
+﻿namespace YaNet.Test
 {
-
+	public class ParserTest
+	{
+		
+	}
 }

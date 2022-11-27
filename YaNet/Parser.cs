@@ -1,5 +1,8 @@
-﻿namespace YaNet;
-public class Class1
+﻿namespace YaNet
 {
+	public class Parser
+	{
 
+
+	}
 }
