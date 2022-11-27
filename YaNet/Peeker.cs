@@ -28,7 +28,7 @@ namespace YaNet
 
 		public string Substring(int startIndex, int endIndex)
 		{
-			if (startIndex < 0 || startIndex >= endIndex)
+			if (startIndex < 0 || startIndex > endIndex)
 				throw new Exception($"Start[{startIndex}] or end[{endIndex}] index not valid.");
 
 			return _buffer.Substring(startIndex, endIndex - startIndex);

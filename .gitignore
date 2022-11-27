@@ -5,4 +5,5 @@ YaNet.Test/bin/*
 YaNet.Test/obj/*
 
 
-YaNet.Samples/*
+YaNet.Samples/bin/*
+YaNet.Samples/obj/*
