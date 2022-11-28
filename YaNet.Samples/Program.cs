@@ -16,11 +16,6 @@
 		public static string YamlText => File.ReadAllText(
 			Directory.GetCurrentDirectory() + "/ex1.yaml");
 
-		private string yaml;
-
-		public Program() => yaml = YamlText;
-		
-
 		public static void Main()
 		{
 			string yaml = YamlText;
@@ -37,7 +32,7 @@
 
 
 
-			int delimiterPosition = peeker.Peek(delimiter, 0);
+			int delimiterPosition = peeker.Peek(delimiter);
 
 			string key = peeker.Substring(0, delimiterPosition);
 			keys.Add(key);
@@ -67,6 +62,17 @@
 			for (int i = 0; i < keys.Count; i++)
 			{
 				Console.WriteLine($"key: {$"'{keys[i]}'",15} value: {$"'{values[i]}'",15}");
+			}
+
+			Counter counter = new Counter(DefaultSymbols.TabIndent);
+
+			for (int i = 0; i < keys.Count; i++)
+			{
+				key = keys[i];
+
+				int levelIndent = counter.LevelIndent(key);
+
+				Console.WriteLine($"key: '{key}' levelIndent: {levelIndent}");
 			}
 
 		}

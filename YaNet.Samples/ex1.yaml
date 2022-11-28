@@ -1,6 +1,7 @@
 person:
-  name: Bob
-  age: 18
-  sex: male
-  weight: 68
-  growth: 180
+	name: Bob
+	age: 18
+	sex: male
+	body:
+		weight: 68
+		growth: 180

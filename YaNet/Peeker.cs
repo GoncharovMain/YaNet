@@ -7,6 +7,8 @@ namespace YaNet
 
 		public Peeker(string buffer) => (_buffer, _length) = (buffer, buffer.Length);
 
+		public int Peek(char waitSymbol) => Peek(waitSymbol, 0);
+
 		public int Peek(char waitSymbol, int startIndex)
 		{
 			if (0 > startIndex || startIndex >= _length)
