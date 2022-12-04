@@ -548,30 +548,192 @@ name: Bob
 
 ##################################################################
 
+LineBreak:
+  - LF
+  - CRLF
 
 
-# first: expect and take key
+#if first symbol after token-key is '@' then ignore reference
+#for (*) -> token-key
 
-lastIndex = 0;
+# scalar
 
-name => 
-  indexStart = 1
-  indexEnd = 4
-  isKey = true
-  type = string
+token-types:
+  - token-scalar
+  - token-list
+  - token-dictionary
+  - token-object
+  - token-key
+  - token-property
+  - token-reference
 
-lastIndex = indexEnd = 4;
+[token]: [token]
 
-# second: expect and skip delimiter ': '
 
-lastIndex += 2 => 
 
-# thrird: expect and take value 
+token: ${text} -> (token-scalar, token-list, token-dictionary or token-object)
+token: this is ${text} text -> (token-scalar)
 
-Bob =>
-  indexStart = 7
-  indexEnd = 9
-  isKey = false
-  type = string
 
-###
+token-key: token-scalar [partial-scalar]* (1)
+
+text: this is text
+
+
+# list
+
+If second line start substring is `\t- ` then token-key have token-list type
+The starting position of the substring is determined by the LevelIndent
+
+[token]:\n{\t- [token]\n}{\t- [token]\n}{\t- [token]}
+
+[token]:
+  - [token]
+  - [token]
+  - [token]
+
+token-key: token-list [reference] (2)
+  - token-scalar [partial-scalar]*
+  - token-scalar [partial-scalar]*
+  - token-scalar [partial-scalar]*
+
+names:
+  - John
+  - Bob
+  - Patrik
+
+
+# dictionary
+
+[token]:
+  [token]: [token]
+  [token]: [token]
+  [token]: [token]
+
+token-key: token-dictionary [reference] (3)
+  token-key: token-scalar [partial-scalar]*
+  token-key: token-scalar [partial-scalar]*
+  token-key: token-scalar [partial-scalar]*
+
+phones:
+  John: 88005552524
+  Bob: 88005552525
+  Patrik: 88005552526
+
+
+
+token-scalar extended token
+token-key extended of token-scalar
+
+token-scalar, token-list and token-dictionary follow token-key
+
+
+
+What is type of token?
+When parsing, data should be presented in 1 dimensional form.
+
+
+# Scalar
+
+# delimiter:
+`: ` -> (token-scalar)
+
+
+# List
+
+token:
+  - []
+-> (token-list)
+
+token: ${token-ref}
+  - []
+-> (token-list)
+
+
+# regular expression for LF and CRLF format
+# delimiter:
+
+`:\n(\t)*- ` -> (token-list)
+`: ${token-ref}\n(\t)*- ` -> (token-list) (override)
+
+`:\r\n(\t)*- ` -> (token-list)
+`: ${token-ref}\r\n(\t)*- ` -> (token-list) (override)
+
+(\t)* - count tab indent is LevelIndent
+
+
+
+token:
+  - token
+  - token
+  - token
+  - token
+
+# token:\n\t- token\n\t- token\n\t- token\n\t- token
+# token:\r\n\t- token\r\n\t- token\r\n\t- token\r\n\t- token
+
+# `\n\t- `{token}`\n\t- `{token}`\n\t- `{token}`\n\t- `{token}
+# `\t- `{token}`\n\t- `{token}`\n\t- `{token}`\n\t- `{token}
+
+{token}`\n\t- `{token}`\n\t- `{token}`\n\t- `{token}
+
+# delimiter between items of list for LF and CRLF
+
+`\n\t- `
+`\r\n\t- `
+
+
+# dictonary or object 
+
+token:
+  token: token
+
+# regular expression for LF and CRLF format
+# delimiter:
+
+`:\n(\t)*` -> (token-object, token-dictionary)
+`: ${token-reference}\n(\t)*` -> (token-object, token-dictionary) (override)
+
+
+`:\r\n(\t)*` -> (token-object, token-dictionary)
+`:\r\n${token-reference}(\t)*` -> (token-object, token-dictionary) (override)
+
+
+# delimiter between items of object property or items of dictionary
+
+token:
+  token: token
+  token: token
+  token: token
+  token: token
+
+# token:\n\ttoken: token\n\ttoken: token\n\ttoken: token\n\ttoken: token
+#       \n\ttoken: token\n\ttoken: token\n\ttoken: token\n\ttoken: token
+#           token: token\n\ttoken: token\n\ttoken: token\n\ttoken: token
+
+# delete first token (key) and delimiter for LF and CRLF
+
+# {token: token}`\n\t`{token: token}`\n\t`{token: token}`\n\t`{token: token}
+# {token: token}`\r\n\t`{token: token}`\r\n\t`{token: token}`\r\n\t`{token: token}
+
+# delimiter:
+`\n(\t)*`
+`\r\n(\t)*`
+
+
+token:
+  token:
+    - token: token
+      token: token
+      token: token
+
+
+# token:\n\ttoken:\n\t\t- token: token\n\t\t\ttoken: token\n\t\t\ttoken: token
+#           token:\n\t\t- token: token\n\t\t\ttoken: token\n\t\t\ttoken: token
+#                   \t\t- token: token\n\t\t\ttoken: token\n\t\t\ttoken: token
+#                         token: token\n\t\t\ttoken: token\n\t\t\ttoken: token
+
+
+
+
+
