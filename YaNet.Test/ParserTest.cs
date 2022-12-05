@@ -35,7 +35,7 @@ namespace YaNet.Test
 
 			foreach ((char[] symbols, char[] substring, int position) item in testFind)
 			{
-				int currentPosition = Peeker.FindSubstring(item.symbols, item.substring);
+				int currentPosition = new Peeker(item.symbols).IndexOf(item.substring);
 
 				Assert.Equal(currentPosition, item.position);
 			}
@@ -61,7 +61,7 @@ namespace YaNet.Test
 
 			foreach ((string symbols, string substring, int position) item in testFind)
 			{
-				int currentPosition = Peeker.FindSubstring(item.symbols, item.substring);
+				int currentPosition = new Peeker(item.symbols).IndexOf(item.substring);
 
 				Assert.Equal(currentPosition, item.position);
 			}
@@ -71,10 +71,10 @@ namespace YaNet.Test
 		public void FindSubstringException()
 		{
 			Assert.Throws<Exception>(new Action(() => 
-				Peeker.FindSubstring(new char[] { ':', ' ' }, new char[] { ':', ' ', 'J' })));
+				new Peeker(new char[] { ':', ' ' }).IndexOf(new char[] { ':', ' ', 'J' })));
 
 			Assert.Throws<Exception>(new Action(() => 
-				Peeker.FindSubstring(new char[] { }, new char[] { })));
+				new Peeker(new char[] { }).IndexOf(new char[] { })));
 		}
 
 		[Fact]
@@ -94,7 +94,7 @@ namespace YaNet.Test
 
 			foreach ((string line, int countIndent) yanet in yanets)
 			{
-				Assert.Equal(Peeker.CountIndent(yanet.line, indent), yanet.countIndent);
+				Assert.Equal(new Peeker(yanet.line).CountIndent(indent), yanet.countIndent);
 			}
 		}
 
@@ -115,7 +115,7 @@ namespace YaNet.Test
 
 			foreach ((string line, int countIndent) yanet in yanets)
 			{
-				Assert.Equal(Peeker.CountIndent(yanet.line, indent), yanet.countIndent);
+				Assert.Equal(new Peeker(yanet.line).CountIndent(indent), yanet.countIndent);
 			}
 		}
 
@@ -124,8 +124,8 @@ namespace YaNet.Test
 		{
 			string indent = "    "; // 4 spaces;
 
-			Assert.Throws<Exception>(new Action(() => Peeker.CountIndent("   ", indent))); // 3
-			Assert.Throws<Exception>(new Action(() => Peeker.CountIndent("    ", indent)));// 4
+			Assert.Throws<Exception>(new Action(() => new Peeker("   ").CountIndent(indent))); // 3
+			Assert.Throws<Exception>(new Action(() => new Peeker("    ").CountIndent(indent)));// 4
 		}
 	}
 }

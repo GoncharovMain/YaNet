@@ -107,7 +107,7 @@
 
 		public Line(int number, int startPosition, int endPosition)
 		{
-			_offset = new Offset(number, startPosition, endPosition);
+			_offset = new Offset(startPosition, endPosition);
 			_lengthIndent = endPosition - startPosition;
 		}
 
@@ -194,21 +194,11 @@
 
 		public static void Main()
 		{
-			string[] yamlLines = YamlLines;
+			string yaml = "person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180";
 
-			Line[] lines = new Line[yamlLines.Length];
+			Parser parser = new Parser(YamlText);
 
-			for (int i = 0; i < lines.Length; i++)
-			{
-				lines[i] = yamlLines[i];
-			}
-
-
-			foreach (Line line in lines)
-			{
-
-				Console.WriteLine($"{line.ToString()}");
-			}
+			parser.Info();
 
 		}
 	}
