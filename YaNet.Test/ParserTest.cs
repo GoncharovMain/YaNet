@@ -120,6 +120,16 @@ namespace YaNet.Test
 		}
 
 		[Fact]
+		public void StartWithTest()
+		{
+			Assert.True(new Peeker("name: John").StartWith("nam"));
+			Assert.True(new Peeker("\tname: John").StartWith("\t"));
+
+			Assert.False(new Peeker("  name: John").StartWith("\t"));
+			Assert.False(new Peeker("\tname: John").StartWith("  "));
+		}
+
+		[Fact]
 		public void CountIndentExceptionTest()
 		{
 			string indent = "    "; // 4 spaces;

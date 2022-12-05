@@ -8,6 +8,7 @@ namespace YaNet
 		private int _end;
 
 		private int _length;
+		public int Length => _length;
 
 		public Peeker(string buffer, int start, int end)
 		{
@@ -15,7 +16,7 @@ namespace YaNet
 			_start = start;
 			_end = end;
 
-			_length = start - end + 1;
+			_length = end - start + 1;
 		}
 
 		public Peeker(char[] buffer) : this(new String(buffer)) { }
@@ -48,6 +49,22 @@ namespace YaNet
 				throw new Exception($"Start[{startIndex}] or end[{endIndex}] index not valid.");
 
 			return _buffer.Substring(startIndex, endIndex - startIndex);
+		}
+
+		public bool StartWith(string substring)
+		{
+			if (_length < substring.Length)
+				throw new Exception("Length of buffer less than length of substring.");
+
+			for (int i = _start, j = 0; i < _end && j < substring.Length; i++, j++)
+			{
+				if (_buffer[i] != substring[j])
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		public int IndexOf(char[] substring)
