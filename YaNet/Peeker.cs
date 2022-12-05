@@ -8,10 +8,20 @@ namespace YaNet
 		private int _end;
 
 		private int _length;
+
+		public Offset Offset => new Offset(_start, _end);
+
 		public int Length => _length;
 
+		public Peeker(string buffer) : this(buffer, 0, buffer.Length - 1) { }
+		
+		public Peeker(string buffer, int start) : this(buffer, start, buffer.Length - 1) { }
+		
 		public Peeker(string buffer, int start, int end)
 		{
+			if (start > end)
+				throw new Exception($"Start position [{start}] more than end position [{end}].");
+
 			_buffer = buffer;
 			_start = start;
 			_end = end;
@@ -19,17 +29,21 @@ namespace YaNet
 			_length = end - start + 1;
 		}
 
+
 		public Peeker(char[] buffer) : this(new String(buffer)) { }
-		public Peeker(string buffer) : this(buffer, 0, buffer.Length - 1) { }
 
-		public int Peek(char waitSymbol) => Peek(waitSymbol, 0);
+		public Peeker(char[] buffer, int start) : this(new String(buffer), start) { }
 
-		public int Peek(char waitSymbol, int startIndex)
+		public Peeker(char[] buffer, int start, int end) : this(new String(buffer), start, end) { }
+
+
+
+		public int Peek(char waitSymbol)
 		{
-			if (0 > startIndex || startIndex >= _length)
-				throw new Exception($"Start index[{startIndex}] is out of range buffer.");
+			if (0 > _start || _start >= _length)
+				throw new Exception($"Start index[{_start}] is out of range buffer.");
 
-			for (int i = startIndex; i < _length; i++)
+			for (int i = _start; i < _end; i++)
 			{
 				if (_buffer[i] == waitSymbol)
 					return i;
@@ -72,16 +86,17 @@ namespace YaNet
 
 		public int IndexOf(string substring)
 		{
-			if (substring.Length == 0 || _buffer.Length == 0)
+			if (_length == 0 || substring.Length == 0)
 				throw new Exception("Characters is empty.");
 
-			if (_buffer.Length < substring.Length)
+			if (_length < substring.Length)
 				throw new Exception("Length buffer less than length substring.");
 
-			int maxLength = _buffer.Length - substring.Length;
 			bool hasSubstring = true;
 
-			for (int i = 0; i < maxLength; i++)
+			int maxLength = _end - substring.Length + 2;
+
+			for (int i = _start; i < maxLength; i++)
 			{
 				for (int j = 0; j < substring.Length; j++)
 				{
@@ -127,5 +142,7 @@ namespace YaNet
 
 			return countIndent;
 		}
+
+		public override string ToString() => _buffer.Substring(_start, _length);
 	}
 }

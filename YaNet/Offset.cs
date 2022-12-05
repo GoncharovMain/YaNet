@@ -10,5 +10,10 @@ namespace YaNet
 			Start = start;
 			End = end;
 		}
+
+		public static implicit operator String(Offset offset)
+			=> offset.ToString();
+
+		public override string ToString() => $"Start: {Start} end: {End}";
 	}
 }
