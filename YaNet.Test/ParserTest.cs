@@ -60,8 +60,6 @@ namespace YaNet.Test
 			{
 				int currentPosition = item.peeker.IndexOf(item.substring);
 
-				//_testOutputHelper.WriteLine($"{item.peeker.Offset} current: {currentPosition} expected: {item.position}");
-				
 				Assert.Equal(currentPosition, item.position);
 			}
 		}
@@ -69,34 +67,29 @@ namespace YaNet.Test
 		[Fact]
 		public void FindSubstringStringTest()
 		{
-			string[] yanet = new string[]
-			{
-				"name: John",
-				"age: 18"
-			};
-
 			(Peeker peeker, string substring, int position)[] testFind = new (Peeker, string, int)[]
 			{
-				(new Peeker(yanet[0]), ": J", 4),
-				(new Peeker(yanet[0]), "am", 1),
-				(new Peeker(yanet[0]), "hni", -1),
-				(new Peeker(yanet[0]), "ohn", 7),
-				(new Peeker(yanet[1]), ": ", 3),
-				(new Peeker(yanet[1]), "17", -1),
+				(new Peeker("name: John"), ": J", 4),
+				(new Peeker("name: John"), "am", 1),
+				(new Peeker("name: John"), "hni", -1),
+				(new Peeker("name: John"), "ohn", 7),
+				(new Peeker("age: 18"), ": ", 3),
+				(new Peeker("age: 18"), "17", -1),
 
-				(new Peeker(yanet[1], 0), ": ", 3),
-				(new Peeker(yanet[1], 0), " 1", 4),
+				(new Peeker("age: 18", 0), ": ", 3),
+				(new Peeker("age: 18", 0), " 1", 4),
 
-				(new Peeker(yanet[1], 0), "18", 5),
-				(new Peeker(yanet[1], 2), "1", 5),
-				(new Peeker(yanet[1], 4), "18", 5),
-				(new Peeker(yanet[1], 5), "18", 5),
+				(new Peeker("age: 18", 0), "18", 5),
+				(new Peeker("age: 18", 2), "1", 5),
+				(new Peeker("age: 18", 4), "18", 5),
+				(new Peeker("age: 18", 5), "18", 5),
+				(new Peeker("age: 18", 2), "ge", -1),
+
+				(new Peeker("personName: John", 4), "Name", 6),
 			};
 
 			foreach ((Peeker peeker, string substring, int position) item in testFind)
 			{
-				_testOutputHelper.WriteLine($"yanet: '{item.peeker.ToString()}' offset: {item.peeker.Offset}");
-
 				int currentPosition = item.peeker.IndexOf(item.substring);
 
 				Assert.Equal(currentPosition, item.position);
@@ -104,13 +97,16 @@ namespace YaNet.Test
 		}
 
 		[Fact]
-		public void FindSubstringException()
+		public void FindIndexOfException()
 		{
 			Assert.Throws<Exception>(new Action(() => 
 				new Peeker(new char[] { ':', ' ' }).IndexOf(new char[] { ':', ' ', 'J' })));
 
 			Assert.Throws<Exception>(new Action(() => 
 				new Peeker(new char[] { }).IndexOf(new char[] { })));
+
+			Assert.Throws<Exception>(new Action(() => 
+				new Peeker("name: Bob", 7).IndexOf("Bob")));
 		}
 
 		[Fact]
@@ -142,19 +138,19 @@ namespace YaNet.Test
 		{
 			string indent = "\t";
 
-			(string line, int countIndent)[] yanets = new (string, int)[]
+			(Peeker peeker, int countIndent)[] yanets = new (Peeker, int)[]
 			{
-				("\t\tname: John", 2),
-				("\tname: Bob", 1),
-				("\t\t name: Bob", 2),
-				("\t\t\tname: Bob", 3),
-				("name: Bob", 0),
-				(" name: Bob", 0),
+				(new Peeker("\t\tname: John"), 2),
+				(new Peeker("\tname: Bob"), 1),
+				(new Peeker("\t\t name: Bob"), 2),
+				(new Peeker("\t\t\tname: Bob"), 3),
+				(new Peeker("name: Bob"), 0),
+				(new Peeker(" name: Bob"), 0),
 			};
 
-			foreach ((string line, int countIndent) yanet in yanets)
+			foreach ((Peeker peeker, int countIndent) yanet in yanets)
 			{
-				Assert.Equal(new Peeker(yanet.line).CountIndent(indent), yanet.countIndent);
+				Assert.Equal(yanet.peeker.CountIndent(indent), yanet.countIndent);
 			}
 		}
 

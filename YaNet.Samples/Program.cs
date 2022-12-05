@@ -129,69 +129,6 @@
 
 		public static string[] YamlLines => File.ReadAllLines(CurrentDirectory);
 
-		public static void ParseWithPeek()
-		{
-			string yaml = YamlText;
-
-			char delimiter = DefaultSymbols.Delimiter;
-			char endLine = DefaultSymbols.EndLine;
-
-
-			Peeker peeker = new Peeker(yaml);
-
-			List<string> keys = new List<string>();
-			List<string> values = new List<string>();
-
-
-
-			int delimiterPosition, endLinePosition;
-			string key, value;
-
-
-			delimiterPosition = peeker.Peek(delimiter);
-
-			key = peeker.Substring(0, delimiterPosition);
-			keys.Add(key);
-
-			endLinePosition = peeker.Peek(endLine, delimiterPosition);
-
-			value = peeker.Substring(delimiterPosition + 1, endLinePosition);
-			values.Add(value);
-
-
-			while (endLinePosition < yaml.Length)
-			{
-				delimiterPosition = peeker.Peek(delimiter, endLinePosition + 1);
-
-				key = peeker.Substring(endLinePosition + 1, delimiterPosition);
-				keys.Add(key);
-
-				endLinePosition = peeker.Peek(endLine, delimiterPosition);
-
-				value = peeker.Substring(delimiterPosition + 1, endLinePosition);
-				values.Add(value);
-			}
-
-			Console.WriteLine();
-
-
-			for (int i = 0; i < keys.Count; i++)
-			{
-				Console.WriteLine($"key: {$"'{keys[i]}'",15} value: {$"'{values[i]}'",15}");
-			}
-
-			Counter counter = new Counter(DefaultSymbols.TabIndent);
-
-			for (int i = 0; i < keys.Count; i++)
-			{
-				key = keys[i];
-
-				int levelIndent = counter.LevelIndent(key);
-
-				Console.WriteLine($"key: '{key}' levelIndent: {levelIndent}");
-			}
-		}
-
 		public static void Main()
 		{
 			string yaml = "person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180";

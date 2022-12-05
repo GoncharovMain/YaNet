@@ -2,6 +2,12 @@ namespace YaNet
 {
 	public class Peeker
 	{
+		
+		private string  buff;
+		
+		public ref string BUFF => ref buff;
+		
+
 		private string _buffer;
 		
 		private int _start;
@@ -37,26 +43,6 @@ namespace YaNet
 		public Peeker(char[] buffer, int start, int end) : this(new String(buffer), start, end) { }
 
 
-
-		public int Peek(char waitSymbol)
-		{
-			if (0 > _start || _start >= _length)
-				throw new Exception($"Start index[{_start}] is out of range buffer.");
-
-			for (int i = _start; i < _end; i++)
-			{
-				if (_buffer[i] == waitSymbol)
-					return i;
-			}
-
-			return _length;
-		}
-
-		public int Peek(string waitSubstring, int startIndex)
-		{
-			return -1;
-		}
-
 		public string Substring(int startIndex, int endIndex)
 		{
 			if (startIndex < 0 || startIndex > endIndex)
@@ -79,6 +65,20 @@ namespace YaNet
 			}
 
 			return true;
+		}
+
+		public int IndexOf(char symbol)
+		{
+			if (0 > _start || _start >= _length)
+				throw new Exception($"Start index[{_start}] is out of range buffer.");
+
+			for (int i = _start; i < _end; i++)
+			{
+				if (_buffer[i] == symbol)
+					return i;
+			}
+
+			return _length;
 		}
 
 		public int IndexOf(char[] substring)
