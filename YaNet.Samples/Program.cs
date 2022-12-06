@@ -1,4 +1,6 @@
-﻿namespace YaNet.Samples
+﻿using System.Text;
+
+namespace YaNet.Samples
 {
 	public static class DefaultSymbols
 	{
@@ -121,6 +123,25 @@
 			=> new Line();
 	}
 
+	public class Employee
+	{
+		private StringBuilder _buffer;
+		
+		public StringBuilder Buffer => _buffer;
+
+		public Employee(string buffer)
+		{
+			_buffer = new StringBuilder(buffer);
+			Console.WriteLine($"object is empty buffer: {Buffer == null}");
+		}
+
+		public void Info()
+		{
+			Console.WriteLine(_buffer);
+		}
+
+	}
+
 	public class Program
 	{
 		public static string CurrentDirectory => Directory.GetCurrentDirectory() + "/ex1.yaml";
@@ -129,13 +150,53 @@
 
 		public static string[] YamlLines => File.ReadAllLines(CurrentDirectory);
 
+		public static string RepeatChar(char symbol, int count)
+			=> new String(symbol, count);
+
+		public static string RepeatString(string line, int count)
+			=> String.Join(line, count);
+
 		public static void Main()
 		{
 			string yaml = "person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180";
 
-			Parser parser = new Parser(YamlText);
+			Parser parser = new Parser(yaml);
 
 			parser.Info();
+
+
+
+			yaml = "\t\trequest:\n\t\t\t- google\n\t\t\t- yandex";
+
+			Peeker peeker = new Peeker(yaml, 0, 9);
+
+			int levelIndent = peeker.CountIndent("\t");
+
+			string tokenIndent = RepeatChar('\t', levelIndent);
+
+			string tokenType = $"\n{tokenIndent}\t- ";
+
+			int lengthTokenType = tokenType.Length;
+
+			int start = 10;
+			int end = start + lengthTokenType - 1;
+
+			Peeker peekerListType = new Peeker(yaml, start, end);
+
+			Peeker peekerDictType = new Peeker(yaml, start, end);
+
+			Peeker peekerObjType = new Peeker(yaml, start, end);
+
+
+			bool isList = peekerListType == tokenType;
+
+
+			Console.WriteLine($"peekerListType: {peekerListType.ToCharCode()}");
+			Console.WriteLine($"     tokenType: {new Peeker(tokenType).ToCharCode()}");
+			
+
+			Console.WriteLine();
+
 
 		}
 	}

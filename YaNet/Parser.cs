@@ -5,6 +5,7 @@
 	{
 		Scalar,
 		List,
+		Dictionary,
 		Object
 	}
 

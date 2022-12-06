@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace YaNet
 {
 	public class Peeker
@@ -8,7 +10,7 @@ namespace YaNet
 		public ref string BUFF => ref buff;
 		
 
-		private string _buffer;
+		private StringBuilder _buffer;
 		
 		private int _start;
 		private int _end;
@@ -18,6 +20,7 @@ namespace YaNet
 		public Offset Offset => new Offset(_start, _end);
 
 		public int Length => _length;
+		public string Buffer => ToString();
 
 		public Peeker(string buffer) : this(buffer, 0, buffer.Length - 1) { }
 		
@@ -28,7 +31,7 @@ namespace YaNet
 			if (start > end)
 				throw new Exception($"Start position [{start}] more than end position [{end}].");
 
-			_buffer = buffer;
+			_buffer = new StringBuilder(buffer);
 			_start = start;
 			_end = end;
 
@@ -42,13 +45,12 @@ namespace YaNet
 
 		public Peeker(char[] buffer, int start, int end) : this(new String(buffer), start, end) { }
 
-
 		public string Substring(int startIndex, int endIndex)
 		{
 			if (startIndex < 0 || startIndex > endIndex)
 				throw new Exception($"Start[{startIndex}] or end[{endIndex}] index not valid.");
 
-			return _buffer.Substring(startIndex, endIndex - startIndex);
+			return Buffer.Substring(startIndex, endIndex - startIndex);
 		}
 
 		public bool StartWith(string substring)
@@ -143,6 +145,34 @@ namespace YaNet
 			return countIndent;
 		}
 
-		public override string ToString() => _buffer.Substring(_start, _length);
+		public static bool operator ==(Peeker peeker, string line)
+		{
+			if (peeker._length != line.Length)
+				return false;
+
+			for (int i = peeker._start, j = 0; i < peeker._end; i++, j++)
+			{
+				if (peeker._buffer[i] != line[j])
+					return false;
+			}
+
+			return true;
+		}
+
+		public static bool operator !=(Peeker peeker, string line)
+			=> !(peeker == line);
+
+		public override bool Equals(object obj)
+			=> this == (string)obj;
+
+		public override int GetHashCode() => Buffer.GetHashCode();
+		
+
+		public override string ToString() => _buffer.ToString(_start, _length);
+
+		public string ToCharCode()
+		{
+			return String.Join("", Buffer.Select(ch => $"[{(int)ch}]"));
+		}
 	}
 }
