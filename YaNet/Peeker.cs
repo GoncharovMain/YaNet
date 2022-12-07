@@ -4,12 +4,6 @@ namespace YaNet
 {
 	public class Peeker
 	{
-		
-		private string  buff;
-		
-		public ref string BUFF => ref buff;
-		
-
 		private StringBuilder _buffer;
 		
 		private int _start;
@@ -26,17 +20,7 @@ namespace YaNet
 		
 		public Peeker(string buffer, int start) : this(buffer, start, buffer.Length - 1) { }
 		
-		public Peeker(string buffer, int start, int end)
-		{
-			if (start > end)
-				throw new Exception($"Start position [{start}] more than end position [{end}].");
-
-			_buffer = new StringBuilder(buffer);
-			_start = start;
-			_end = end;
-
-			_length = end - start + 1;
-		}
+		public Peeker(string buffer, int start, int end) : this(new StringBuilder(buffer), start, end) { }
 
 
 		public Peeker(char[] buffer) : this(new String(buffer)) { }
@@ -44,6 +28,24 @@ namespace YaNet
 		public Peeker(char[] buffer, int start) : this(new String(buffer), start) { }
 
 		public Peeker(char[] buffer, int start, int end) : this(new String(buffer), start, end) { }
+
+		public Peeker(StringBuilder buffer) : this(buffer, 0, buffer.Length - 1) { }
+
+		public Peeker(StringBuilder buffer, int start) : this(buffer, start, buffer.Length - 1) { }
+
+		public Peeker(StringBuilder buffer, int start, int end)
+		{
+			if (start > end)
+				throw new Exception($"Start position [{start}] more than end position [{end}].");
+
+			_buffer = buffer;
+			_start = start;
+			_end = end;
+
+			_length = end - start + 1;
+		}
+
+		public Peeker(StringBuilder buffer, Offset offset) : this(buffer, offset.Start, offset.End) { }
 
 		public string Substring(int startIndex, int endIndex)
 		{
@@ -58,7 +60,7 @@ namespace YaNet
 			if (_length < substring.Length)
 				throw new Exception("Length of buffer less than length of substring.");
 
-			for (int i = _start, j = 0; i < _end && j < substring.Length; i++, j++)
+			for (int i = _start, j = 0; i <= _end && j < substring.Length; i++, j++)
 			{
 				if (_buffer[i] != substring[j])
 				{
@@ -74,7 +76,7 @@ namespace YaNet
 			if (0 > _start || _start >= _length)
 				throw new Exception($"Start index[{_start}] is out of range buffer.");
 
-			for (int i = _start; i < _end; i++)
+			for (int i = _start; i <= _end; i++)
 			{
 				if (_buffer[i] == symbol)
 					return i;
@@ -120,6 +122,75 @@ namespace YaNet
 			return -1;
 		}
 
+		public Offset[] Split(char delimiter = '\n')
+		{
+			int countLines = Counter('\n') + 1;
+			
+			Offset[] offsets = new Offset[countLines];
+
+			int i = 0;
+
+			int start, end;
+
+			for (start = _start, end = _start; end <= _end; end++)
+			{
+				if (_buffer[end] == delimiter)
+				{
+					offsets[i++] = new Offset(start, end - 1);
+					start = end + 1;
+				}
+			}
+
+			offsets[^1] = new Offset(start, _end);
+
+			return offsets;
+		}
+
+		public int Counter(char symbol)
+		{
+			int count = 0;
+
+			for (int i = _start; i <= _end; i++)
+			{
+				if (_buffer[i] == symbol)
+				{
+					count++;
+				}
+			}
+
+			return count;
+		}
+
+		public int Counter(string substring)
+		{
+			int count = 0;
+
+			bool isEqual = true;
+
+			int maxLength = _end - substring.Length;
+
+			for (int i = _start; i <= maxLength; i++)
+			{
+				for (int j = 0; j < substring.Length; j++)
+				{
+					if (_buffer[i] != substring[j])
+					{
+						isEqual = false;
+					}
+				}
+				
+				if (isEqual)
+				{
+					count++;
+				}
+
+				isEqual = true;
+			}
+
+			return count;
+		}
+
+
 		public int CountIndent(string indent)
 		{
 			if (_buffer.Length <= indent.Length)
@@ -150,7 +221,7 @@ namespace YaNet
 			if (peeker._length != line.Length)
 				return false;
 
-			for (int i = peeker._start, j = 0; i < peeker._end; i++, j++)
+			for (int i = peeker._start, j = 0; i <= peeker._end; i++, j++)
 			{
 				if (peeker._buffer[i] != line[j])
 					return false;

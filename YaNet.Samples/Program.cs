@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using YaNet;
+using YaNet.Lines;
 
 namespace YaNet.Samples
 {
@@ -54,93 +56,6 @@ namespace YaNet.Samples
 		// public string ListDelimiter => $"\n{Indent}- ";
 	}
 
-	public class ScalarLine : Line
-	{
-		private char[] _key;
-		private char[] _values;
-		private char[] _references;
-
-		public ScalarLine(int number, int startPosition, int endPosition) : base(number, startPosition, endPosition)
-		{
-
-		}
-	}
-
-	public class ListLine : Line
-	{
-		private char[] _key;
-		private Line[] _items;
-
-		public ListLine(int number, int startPosition, int endPosition) : base(number, startPosition, endPosition)
-		{
-
-		}
-	}
-
-	public class ObjectLine : Line
-	{
-		private Line[] _lines;
-
-		public ObjectLine(int number, int startPosition, int endPosition) : base(number, startPosition, endPosition)
-		{
-
-		}
-	}
-
-	public class Line
-	{
-		private char[] _text;
-		private char[] _indent;
-		private int _lengthIndent;
-		private int _levelIndent;
-
-		private Offset _offset;
-
-		public Line()
-		{
-			_indent = new char[] { '\t' };
-			_lengthIndent = _indent.Length;
-		}
-
-		public Line(char text, Offset offset)
-		{
-			_offset = offset;
-		}
-
-		public Line(int number, int startPosition, int endPosition)
-		{
-			_offset = new Offset(startPosition, endPosition);
-			_lengthIndent = endPosition - startPosition;
-		}
-
-		public override string ToString()
-			=> new String(String.Empty);
-
-		public static implicit operator Line(char[] line)
-			=> new Line();
-
-		public static implicit operator Line(string line)
-			=> new Line();
-	}
-
-	public class Employee
-	{
-		private StringBuilder _buffer;
-		
-		public StringBuilder Buffer => _buffer;
-
-		public Employee(string buffer)
-		{
-			_buffer = new StringBuilder(buffer);
-			Console.WriteLine($"object is empty buffer: {Buffer == null}");
-		}
-
-		public void Info()
-		{
-			Console.WriteLine(_buffer);
-		}
-
-	}
 
 	public class Program
 	{
@@ -150,53 +65,92 @@ namespace YaNet.Samples
 
 		public static string[] YamlLines => File.ReadAllLines(CurrentDirectory);
 
-		public static string RepeatChar(char symbol, int count)
-			=> new String(symbol, count);
-
-		public static string RepeatString(string line, int count)
-			=> String.Join(line, count);
-
 		public static void Main()
 		{
-			string yaml = "person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180";
+			string yaml = "person:\n\tname: John\n\t\t\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180";
 
 			Parser parser = new Parser(yaml);
 
-			parser.Info();
+			parser.Deserialize();
 
 
+
+			
+			// levelIndent, tokenIndent, tokenType, lengthTokenType, start, end, peeker, isList, isDict, isScalar
+
+			// вычисляется отступ
+			// генерируются ожидаемые разделители для определения типа
+
+			// сравниваются поочерёдно и выбирается соответсвующий тип
+			
+			string yaml1 = "\t\tperson: John\n\t\tage: 18\n\t\tsex: male";
+			string yaml2 = "\t\tperson:\n\t\t\tname: John\n\t\t\tage: 18\n\t\t\tsex: male";
+			string yaml3 = "\t\tperson:\n\t\t\t- John\n\t\t\t- Bob\n\t\t\t- Martin";
+
+			// для yaml1 строка "person: John" является Scalar, т.к. делимитер для следующей строки "\t\t" => "\t\t"
+			// для yaml2 строка "person: John" является Object, т.к. делимитер для следующей строки отступ на 1 больше "\t\t" => "\t\t\t"
+			// для yaml3 строка "person: John" является List, т.к. делимитер для следующей строки 
 
 			yaml = "\t\trequest:\n\t\t\t- google\n\t\t\t- yandex";
 
-			Peeker peeker = new Peeker(yaml, 0, 9);
 
-			int levelIndent = peeker.CountIndent("\t");
+			// тест для границы _end
 
-			string tokenIndent = RepeatChar('\t', levelIndent);
+			// взять весь текст из файла
 
-			string tokenType = $"\n{tokenIndent}\t- ";
+			// храним строку не как элемент массива,
+			// а как объект (Line) с ссылкой на весь текст 
+			// и смещение - начальная и конечная позиции включительно
+			// нумерация начинается с нуля
 
-			int lengthTokenType = tokenType.Length;
-
-			int start = 10;
-			int end = start + lengthTokenType - 1;
-
-			Peeker peekerListType = new Peeker(yaml, start, end);
-
-			Peeker peekerDictType = new Peeker(yaml, start, end);
-
-			Peeker peekerObjType = new Peeker(yaml, start, end);
+			// сначала считаем сколько строк во всем буфере
+			// выделяем offset-ы и создаём массив объектов Line 
+			//   для каждого объекта Line считаем отступ и проверяем,
+			//   допустимы ли такие отступы
 
 
-			bool isList = peekerListType == tokenType;
+			// tamplates:
+			// 	для scalar => $"(\t)*(N)(*)"
+			// 	для list => $"(\t)*(N)\t- (*)"
+			// 	для dictionary => $"(\t)*(N)(*)"
+
+			// 	Qualifier/Token:
+			//		TypeQualifier - определяет тип строки
+			//		Peeker - ищет в строках подстроки и др. операции
+			// 		Splitter - создаёт токены строк и создаёт на них ссылки
+
+			//	
+
+			TypeQualifier typeQualifier = new TypeQualifier(yaml2, (0, 14));
 
 
-			Console.WriteLine($"peekerListType: {peekerListType.ToCharCode()}");
-			Console.WriteLine($"     tokenType: {new Peeker(tokenType).ToCharCode()}");
-			
+			string scalarTrace = typeQualifier.ScalarTrace();
 
-			Console.WriteLine();
+			string listTrace = typeQualifier.ListTrace();
 
+			string objectTrace = typeQualifier.ObjectTrace();
+
+
+
+			Peeker peeker = new Peeker(yaml2, 15, 16);
+
+
+
+			bool isScalar = peeker == scalarTrace;
+
+			bool isList = peeker == listTrace;
+
+			bool isObject = peeker == objectTrace;
+
+
+			Console.WriteLine($"isScalar: {isScalar}");
+			Console.WriteLine($"isList: {isList}");
+			Console.WriteLine($"isObject: {isObject}");
+
+			Console.WriteLine(peeker.ToCharCode());
+			Console.WriteLine(new Peeker(scalarTrace).ToCharCode());
+			Console.WriteLine(new Peeker(listTrace).ToCharCode());
+			Console.WriteLine(new Peeker(objectTrace).ToCharCode());
 
 		}
 	}

@@ -177,5 +177,14 @@ namespace YaNet.Test
 			Assert.Throws<Exception>(new Action(() => new Peeker("   ").CountIndent(indent))); // 3
 			Assert.Throws<Exception>(new Action(() => new Peeker("    ").CountIndent(indent)));// 4
 		}
+
+		[Fact]
+		public void ComparePeekers()
+		{
+			Assert.True(new Peeker("person: John") == "person: John");
+			Assert.True(new Peeker("person: John", 0) == "person: John");
+			Assert.True(new Peeker("person: John", 1) == "erson: John");
+			Assert.True(new Peeker("person: John", 1, 5) == "erson");
+		}
 	}
 }

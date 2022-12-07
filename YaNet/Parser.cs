@@ -1,117 +1,59 @@
-﻿namespace YaNet
+﻿using System.Text;
+using YaNet.Lines;
+
+namespace YaNet
 {
-
-	public enum LineType
-	{
-		Scalar,
-		List,
-		Dictionary,
-		Object
-	}
-
 	public class Parser
 	{
-		private string _text;
-		private string[] _lines;
-		private int[] _indents;
-		private LineType[] _lineTypes;
+		private StringBuilder _buffer;
 
-		private int _length;
+		private Line[] _lines;
 
-		public Parser(string text)
+
+		public Parser(StringBuilder text)
 		{
-			_text = text;
+			_buffer = text;
+		}
 
-			List<(int start, int end)> linePositions = new List<(int, int)>();
+		public Parser(string text) : this(new StringBuilder(text)) { }
 
-			int endPosition = 0;
-			int startPosition = 0;
 
-			do
+		public void Deserialize()
+		{
+			Peeker peeker = new Peeker(_buffer);
+
+			Offset[] offsets = peeker.Split('\n');
+
+			_lines = new Line[offsets.Length];
+
+
+			int currentMinIndent = 0;
+
+
+			for (int i = 0; i < _lines.Length; i++)
 			{
-				endPosition = GetEndLinePosition(endPosition);
-				
-				linePositions.Add((startPosition, endPosition));
-
-				startPosition = endPosition + 1;
+				_lines[i] = new Line(_buffer, offsets[i]);
 			}
-			while(endPosition < _text.Length - 1);
+
+			for (int i = 0; i < _lines.Length - 1; i++)
+			{
+				if (_lines[i].CountIndent + 1 < _lines[i + 1].CountIndent)
+				{
+					throw new Exception($"Line {i + 1}: '{_lines[i + 1]}' has not correct indent.");
+				}
+			}
 
 
-			linePositions.ForEach(item => Console.WriteLine(item));	
+			foreach (Offset offset in offsets)
+			{
+				Peeker p = new Peeker(_buffer, offset.Start, offset.End);
+				Console.WriteLine($"offset: {offset} peeker: '{p.Buffer}'");
+			}
+
+		}
+
+
 		
-			_lines = linePositions
-				.Select(offset => _text.Substring(offset.start, offset.end - offset.start))
-				.ToArray();
-
-			_length = _lines.Length;
-
-
-			_indents = new int[_length];
-
-			for (int i = 0; i < _indents.Length; i++)
-			{
-				_indents[i] = new Peeker(_lines[i]).CountIndent("\t");
-			}
-
-			_lineTypes = new LineType[_length];
-
-			InitTypes();
-
-		}
-
-		private int GetEndLinePosition(int position = 0)
-		{
-			for (int i = position + 1; i < _text.Length; i++)
-			{
-				if (_text[i] == '\n')
-				{
-					return i;
-				}
-			}
-
-			return _text.Length - 1;
-		}
-
-		public void Info()
-		{
-			for (int i = 0; i < _length; i++)
-			{
-				Console.WriteLine($"'{_lines[i]}' : {_indents[i]}");
-			}
-		}
-
-		public void InitTypes()
-		{
-
-			for (int i = 0; i < _length - 1; i++)
-			{
-
-				string delimiter = ": ";
-
-				int endPositionDelimiter = new Peeker(_lines[i]).IndexOf(delimiter);
-				
-				if (endPositionDelimiter == -1)
-				{
-					int p = new Peeker(_lines[i + 1]).IndexOf("- ");
-					
-					Console.WriteLine(p);
-
-					if (p != -1)
-						_lineTypes[i] = LineType.List;
-					else
-						_lineTypes[i] = LineType.Object;
-				}
-				else
-				{
-					_lineTypes[i] = LineType.Scalar;
-				}
-
-
-				Console.WriteLine($"line: {_lines[i]} endPositionDelimiter: {endPositionDelimiter} _lineTypes: {_lineTypes[i]}");
-			}
-
-		}
 
 	}
 }
