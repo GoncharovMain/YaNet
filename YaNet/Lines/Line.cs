@@ -5,6 +5,8 @@ namespace YaNet.Lines
 {
 	public class Line
 	{
+
+		public StringBuilder Buffer => _buffer;
 		private StringBuilder _buffer;
 		private string _indent;
 		private int _lengthIndent;

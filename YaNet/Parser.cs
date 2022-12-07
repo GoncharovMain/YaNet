@@ -27,9 +27,6 @@ namespace YaNet
 			_lines = new Line[offsets.Length];
 
 
-			int currentMinIndent = 0;
-
-
 			for (int i = 0; i < _lines.Length; i++)
 			{
 				_lines[i] = new Line(_buffer, offsets[i]);
@@ -37,6 +34,16 @@ namespace YaNet
 
 			for (int i = 0; i < _lines.Length - 1; i++)
 			{
+				
+				// handle variant when line is item of list
+				//	persons:
+				//		- name: John
+				//			age: 18
+				//		- name: Bob
+				// 			age: 25
+				//		- name: Patrick
+				//			age: 23
+
 				if (_lines[i].CountIndent + 1 < _lines[i + 1].CountIndent)
 				{
 					throw new Exception($"Line {i + 1}: '{_lines[i + 1]}' has not correct indent.");

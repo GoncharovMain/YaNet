@@ -67,7 +67,7 @@ namespace YaNet.Samples
 
 		public static void Main()
 		{
-			string yaml = "person:\n\tname: John\n\t\t\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180";
+			string yaml = "person:\n\tname: John\n\t\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180";
 
 			Parser parser = new Parser(yaml);
 
@@ -82,6 +82,9 @@ namespace YaNet.Samples
 			// генерируются ожидаемые разделители для определения типа
 
 			// сравниваются поочерёдно и выбирается соответсвующий тип
+
+			// определить точный тип строки можно только пропарсив часть буфера
+			// до строки с соответствующим уровнем отступа.
 			
 			string yaml1 = "\t\tperson: John\n\t\tage: 18\n\t\tsex: male";
 			string yaml2 = "\t\tperson:\n\t\t\tname: John\n\t\t\tage: 18\n\t\t\tsex: male";
