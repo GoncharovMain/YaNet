@@ -22,6 +22,7 @@ namespace YaNet
 		{
 			Peeker peeker = new Peeker(_buffer);
 
+
 			Offset[] offsets = peeker.Split('\n');
 
 			_lines = new Line[offsets.Length];
@@ -51,17 +52,32 @@ namespace YaNet
 				}
 			}
 
+			Console.WriteLine($"enter: {(int)'\n'}");
 
-			foreach (Offset offset in offsets)
+			for (int i = 0; i < _lines.Length; i++)
 			{
-				Peeker p = new Peeker(_buffer, offset.Start, offset.End);
-				Console.WriteLine($"offset: {offset} peeker: '{p.Buffer}'");
+				Console.WriteLine($"line: {new Peeker(_lines[i].Buffer, _lines[i].Offset).ToCharCode()}");
 			}
 
+
+
+			Splitter splitter = new Splitter(_lines);
+
+			Splitter splitterNext = splitter.SplitLevel(0);
+
+
+			splitterNext.Offsets.ToList().ForEach(offset => Console.WriteLine($"peek: {new Peeker(_buffer, offset).Buffer} offset: {offset}"));
+
+			
+			Line nextLine = splitterNext[0];
+
+
+			splitterNext = new Splitter(nextLine); 
+
+
+
+
 		}
-
-
-		
 
 	}
 }

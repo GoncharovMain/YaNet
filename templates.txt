@@ -1,0 +1,101 @@
+
+Albert, Allen, Bert, Bob, Cecil, Clarence, Elliot, Elmer, Ernie, Eugene, Fergus, Ferris, Frank, Frasier, Fred, George, Graham, Harvey, Irwin, Larry, Lester, Marvin, Neil, Niles, Oliver, Opie, Ryan, Toby, Ulric, Ulysses, Uri, Waldo, Wally, Walt, Wesley, Yanni, Yogi, Yuri, Alfred, Bill, Brandon, Calvin (Spray), Dean, Dustin, Ethan, Harold, Henry, Irving, Jason, Jenssen (Spray), Josh, Martin, Nick, Norm, Orin, Pat, Perry, Ron, Shawn, Tim, Will, Wyatt, Adam (Rifle), Andy (PunchT), Chris, Colin, Dennis (Shield)(Rifle), Doug, Duffy (Sniper), Gary, Grant, Greg, Ian (Sniper), Jerry, Jon, Keith, Mark, Matt, Mike (RifleT), Nate, Paul, Scott, Steve, Tom, Yahn, Adrian (Sniper), Brad (Rifle), Connor (Rifle), Dave (RifleT), Dan, Derek
+
+person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180\naddress:\n\tcity: Los Angeles
+
+
+
+
+
+templates:
+
+[\t][key]: [value][\n]
+[\t][key]: [ref][\n]
+[\t][key]:[\n]
+[\t][- ][item][\n]
+[\t][- ][[key]: [value]][\n]
+[\t][- ][[key]: [ref]][\n]
+[\t][- ][key]:[\n]
+
+
+
+
+
+
+
+value => [ 
+	null, yes, Yes, YES, true, True, TRUE, 
+	no, No, NO, false, False, FALSE
+	]
+
+scalar:
+
+match level indent
+
+[0][key]: [value][\n]
+[0][*]
+
+
+list:
+
+level indent 
+
+[0][key]:[\n]
+[1][- ][*]
+
+dicionary:
+
+all indent is 0 + 1 = 1
+
+persons:
+	person1:
+		name: John
+		age: 17
+
+	person2:
+		name: Bob
+		age: 22
+
+	person3:
+		name: Patrick
+		age: 18
+
+[0][key]:[\n]
+[1][key]:[\n]
+[2][key]: [value]\n
+[2][key]: [value]\n
+[1][key]:[\n]
+[2][key]: [value]\n
+[2][key]: [value]\n
+[1][key]:[\n]
+[2][key]: [value]\n
+[2][key]: [value]\n
+
+
+group:
+	persons1:
+		- John
+		- Bob
+	persons2:
+		- Martin
+		- Bert
+		- Bob
+		- Cecil
+
+
+[0][key]:[\n]
+[1][key]:[\n]
+[2][- ][value][\n]
+[2][- ][value][\n]
+[1][key]:[\n]
+[2][- ][value][\n]
+
+
+
+dictionary simple
+
+[0][key]:[\n]
+[1][key]: [value][\n]
+[1][key]: [value][\n]
+[1][key]: [value][\n]
+[0][*]

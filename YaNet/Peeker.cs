@@ -124,7 +124,7 @@ namespace YaNet
 
 		public Offset[] Split(char delimiter = '\n')
 		{
-			int countLines = Counter('\n') + 1;
+			int countLines = Counter(delimiter) + 1;
 			
 			Offset[] offsets = new Offset[countLines];
 
@@ -136,7 +136,7 @@ namespace YaNet
 			{
 				if (_buffer[end] == delimiter)
 				{
-					offsets[i++] = new Offset(start, end - 1);
+					offsets[i++] = new Offset(start, end);
 					start = end + 1;
 				}
 			}
@@ -243,7 +243,8 @@ namespace YaNet
 
 		public string ToCharCode()
 		{
-			return String.Join("", Buffer.Select(ch => $"[{(int)ch}]"));
+			int idx = _start;
+			return String.Join("", Buffer.Select(ch => $"[{idx++}:{(int)ch}]"));
 		}
 	}
 }

@@ -17,6 +17,8 @@ namespace YaNet.Lines
 
 		private Offset _offset;
 
+		public Offset Offset => _offset;
+
 		public int CountIndent => _countIndents;
 		public string Indent => _indent.Repeat(_countIndents);
 

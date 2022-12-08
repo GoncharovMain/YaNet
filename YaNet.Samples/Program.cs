@@ -67,14 +67,12 @@ namespace YaNet.Samples
 
 		public static void Main()
 		{
-			string yaml = "person:\n\tname: John\n\t\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180";
+			string yaml = "person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles";
 
 			Parser parser = new Parser(yaml);
 
 			parser.Deserialize();
 
-
-			Console.WriteLine(new Peeker(yaml).ToCharCode());
 
 
 			
@@ -98,7 +96,16 @@ namespace YaNet.Samples
 
 			yaml = "\t\trequest:\n\t\t\t- google\n\t\t\t- yandex";
 
+			// "[\t][key]: [value][\n]",
+			// "[\t][key]: [ref][\n]",
+			// "[\t][key]:[\n]",
+			// "[\t][- ][item][\n]",
+			// "[\t][- ][[key]: [value]][\n]",
+			// "[\t][- ][[key]: [ref]][\n]",
+			// "[\t][- ][key]:[\n]",
 
+
+				
 			// тест для границы _end
 
 			// взять весь текст из файла
@@ -125,37 +132,6 @@ namespace YaNet.Samples
 			// 		Splitter - создаёт токены строк и создаёт на них ссылки
 
 			//	
-
-			TypeQualifier typeQualifier = new TypeQualifier(yaml2, (0, 14));
-
-
-			string scalarTrace = typeQualifier.ScalarTrace();
-
-			string listTrace = typeQualifier.ListTrace();
-
-			string objectTrace = typeQualifier.ObjectTrace();
-
-
-
-			Peeker peeker = new Peeker(yaml2, 15, 16);
-
-
-
-			bool isScalar = peeker == scalarTrace;
-
-			bool isList = peeker == listTrace;
-
-			bool isObject = peeker == objectTrace;
-
-
-			Console.WriteLine($"isScalar: {isScalar}");
-			Console.WriteLine($"isList: {isList}");
-			Console.WriteLine($"isObject: {isObject}");
-
-			Console.WriteLine(peeker.ToCharCode());
-			Console.WriteLine(new Peeker(scalarTrace).ToCharCode());
-			Console.WriteLine(new Peeker(listTrace).ToCharCode());
-			Console.WriteLine(new Peeker(objectTrace).ToCharCode());
 
 		}
 	}

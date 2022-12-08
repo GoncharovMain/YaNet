@@ -20,5 +20,10 @@ namespace YaNet
 
 			return countIndent;
 		}
+
+		public int Count(char symbol, char ignoreAfterSymbol)
+		{
+			return 0;
+		}
 	}
 }
