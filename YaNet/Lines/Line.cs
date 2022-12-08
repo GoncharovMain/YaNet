@@ -6,19 +6,18 @@ namespace YaNet.Lines
 	public class Line
 	{
 
-		public StringBuilder Buffer => _buffer;
 		private StringBuilder _buffer;
+		private Offset _offset;
 		private string _indent;
+		
 		private int _lengthIndent;
 		private int _countIndents;
 		private int _levelIndent;
 
-		private TypeQualifier _typeQualifier;
 
-		private Offset _offset;
 
+		public StringBuilder Buffer => _buffer;
 		public Offset Offset => _offset;
-
 		public int CountIndent => _countIndents;
 		public string Indent => _indent.Repeat(_countIndents);
 
@@ -26,8 +25,6 @@ namespace YaNet.Lines
 		{
 			_indent = "\t";
 			_lengthIndent = _indent.Length;
-
-			_typeQualifier = new TypeQualifier();
 		}
 
 		public Line(StringBuilder text, Offset offset) : this()

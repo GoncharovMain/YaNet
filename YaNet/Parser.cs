@@ -17,6 +17,15 @@ namespace YaNet
 
 		public Parser(string text) : this(new StringBuilder(text)) { }
 
+		public void PrintLines()
+		{
+			for (int i = 0; i < _lines.Length; i++)
+			{
+				Console.WriteLine($"[{i:00}] [{_lines[i].CountIndent}][{this[i]}]");
+			}
+		}
+
+		public string this[int i] => _lines[i].Buffer.ToString(_lines[i].Offset.Start, _lines[i].Offset.Length - 1);
 
 		public void Deserialize()
 		{
@@ -52,29 +61,11 @@ namespace YaNet
 				}
 			}
 
-			Console.WriteLine($"enter: {(int)'\n'}");
 
-			for (int i = 0; i < _lines.Length; i++)
-			{
-				Console.WriteLine($"line: {new Peeker(_lines[i].Buffer, _lines[i].Offset).ToCharCode()}");
-			}
+			PrintLines();
 
-
-
-			Splitter splitter = new Splitter(_lines);
-
-			Splitter splitterNext = splitter.SplitLevel(0);
-
-
-			splitterNext.Offsets.ToList().ForEach(offset => Console.WriteLine($"peek: {new Peeker(_buffer, offset).Buffer} offset: {offset}"));
 
 			
-			Line nextLine = splitterNext[0];
-
-
-			splitterNext = new Splitter(nextLine); 
-
-
 
 
 		}

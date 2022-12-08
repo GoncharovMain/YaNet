@@ -3,49 +3,72 @@ Albert, Allen, Bert, Bob, Cecil, Clarence, Elliot, Elmer, Ernie, Eugene, Fergus,
 
 person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180\naddress:\n\tcity: Los Angeles
 
-
-
-
+scalar
+list
+dictionary
+object
 
 templates:
 
-[\t][key]: [value][\n]
-[\t][key]: [ref][\n]
-[\t][key]:[\n]
-[\t][- ][item][\n]
-[\t][- ][[key]: [value]][\n]
-[\t][- ][[key]: [ref]][\n]
-[\t][- ][key]:[\n]
-
-
-
-
-
-
-
-value => [ 
-	null, yes, Yes, YES, true, True, TRUE, 
-	no, No, NO, false, False, FALSE
-	]
-
 scalar:
+[\t][key][: ][value][\n]     => node for scalar
+[\t][key][: ][ref][\n]       => node for scalar, object
+[\t][key][: ][mixed][\n]       => node for scalar, object
 
-match level indent
+list, dictionary or object:
+[\t][key][:][\n]             => node for list, object
 
-[0][key]: [value][\n]
-[0][*]
+items of list:
+[\t][- ][item][\n]           => node for item of list
+[\t][- ][key][: ][value][\n] => node for item of list
+[\t][- ][key][: ][ref][\n]   => node for item of list
+[\t][- ][key][: ][mixed][\n]   => node for item of list
+[\t][- ][key][:][\n]         => node for item of list
+[\t][-][\n]                  => node for item of list
+
+value => [
+	[ null, Null, NULL, None ] => null
+	[ yes, Yes, YES, true, True, TRUE ] => true 
+	[ no, No, NO, false, False, FALSE ] => false
+]
+
+
+Templates for quality type of node.
+
+Scalar: match level indent
+
+
+[n][key][: ][value][\n]
+[n][*]
+
+[n][key][: ][ref][\n]
+[n][*]
+
+[n][key][: ][value + refs][\n]
+[n][*]
 
 
 list:
 
 level indent 
 
-[0][key]:[\n]
-[1][- ][*]
+[n][key][:][\n]
+[n + 1][- ][*]
 
-dicionary:
+object or dictionary:
 
-all indent is 0 + 1 = 1
+person:
+	name: John
+	age: 18
+	sex: male
+
+object simple
+
+[0][key][:][\n]
+[1][key][: ][value][\n]
+[1][key][: ][value][\n]
+[1][key][: ][value][\n]
+[0][*]
 
 persons:
 	person1:
@@ -60,16 +83,16 @@ persons:
 		name: Patrick
 		age: 18
 
-[0][key]:[\n]
-[1][key]:[\n]
-[2][key]: [value]\n
-[2][key]: [value]\n
-[1][key]:[\n]
-[2][key]: [value]\n
-[2][key]: [value]\n
-[1][key]:[\n]
-[2][key]: [value]\n
-[2][key]: [value]\n
+[0][key][:][\n]
+[1][key][:][\n]
+[2][key][: ][value]\n
+[2][key][: ][value]\n
+[1][key][:][\n]
+[2][key][: ][value]\n
+[2][key][: ][value]\n
+[1][key][:][\n]
+[2][key][: ][value]\n
+[2][key][: ][value]\n
 
 
 group:
@@ -80,22 +103,38 @@ group:
 		- Martin
 		- Bert
 		- Bob
-		- Cecil
+address:
+	city: Los Angeles
 
-
-[0][key]:[\n]
-[1][key]:[\n]
+[0][key][:][\n]
+[1][key][:][\n]
 [2][- ][value][\n]
 [2][- ][value][\n]
-[1][key]:[\n]
+[1][key][:][\n]
 [2][- ][value][\n]
+[2][- ][value][\n]
+[2][- ][value][\n]
+[0][key][:][\n]
+[1][key][: ][value][\n]
 
 
 
-dictionary simple
+group:
+	-
+		- item1
+		- item2
+		- item3
+	-
+		- item1
+		- item2
+		- item3
 
-[0][key]:[\n]
-[1][key]: [value][\n]
-[1][key]: [value][\n]
-[1][key]: [value][\n]
-[0][*]
+[0][key][:][\n]
+[1][- ][][\n]
+[2][- ][item]\n
+[2][- ][item]\n
+[2][- ][item]\n
+[1][- ][][\n]
+[2][- ][item]\n
+[2][- ][item]\n
+[2][- ][item]\n

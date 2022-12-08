@@ -57,6 +57,33 @@ namespace YaNet.Samples
 	}
 
 
+	public static class Templates
+	{
+		public static string[] Scalars = new string[]
+		{
+			"[\t][key][: ][value][\n]",
+			"[\t][key][: ][ref][\n]",
+			"[\t][key][: ][mixed][\n]",
+		};
+
+		public static string[] Objects = new string[]
+		{
+			"[\t][key][: ][ref][\n]",
+			"[\t][key][:][\n]",
+		};
+
+		public static string[] ListItems = new string[]
+		{
+			"[\t][- ][value][\n]",
+			"[\t][- ][key][: ][value][\n]",
+			"[\t][- ][key][: ][ref][\n]",
+			"[\t][- ][key][: ][mixed][\n]",
+			"[\t][- ][key][:][\n]",
+			"[\t][-][\n]"
+		};
+	}
+
+
 	public class Program
 	{
 		public static string CurrentDirectory => Directory.GetCurrentDirectory() + "/ex1.yaml";
@@ -72,67 +99,6 @@ namespace YaNet.Samples
 			Parser parser = new Parser(yaml);
 
 			parser.Deserialize();
-
-
-
-			
-			// levelIndent, tokenIndent, tokenType, lengthTokenType, start, end, peeker, isList, isDict, isScalar
-
-			// вычисляется отступ
-			// генерируются ожидаемые разделители для определения типа
-
-			// сравниваются поочерёдно и выбирается соответсвующий тип
-
-			// определить точный тип строки можно только пропарсив часть буфера
-			// до строки с соответствующим уровнем отступа.
-			
-			string yaml1 = "\t\tperson: John\n\t\tage: 18\n\t\tsex: male";
-			string yaml2 = "\t\tperson:\n\t\t\tname: John\n\t\t\tage: 18\n\t\t\tsex: male";
-			string yaml3 = "\t\tperson:\n\t\t\t- John\n\t\t\t- Bob\n\t\t\t- Martin";
-
-			// для yaml1 строка "person: John" является Scalar, т.к. делимитер для следующей строки "\t\t" => "\t\t"
-			// для yaml2 строка "person: John" является Object, т.к. делимитер для следующей строки отступ на 1 больше "\t\t" => "\t\t\t"
-			// для yaml3 строка "person: John" является List, т.к. делимитер для следующей строки 
-
-			yaml = "\t\trequest:\n\t\t\t- google\n\t\t\t- yandex";
-
-			// "[\t][key]: [value][\n]",
-			// "[\t][key]: [ref][\n]",
-			// "[\t][key]:[\n]",
-			// "[\t][- ][item][\n]",
-			// "[\t][- ][[key]: [value]][\n]",
-			// "[\t][- ][[key]: [ref]][\n]",
-			// "[\t][- ][key]:[\n]",
-
-
-				
-			// тест для границы _end
-
-			// взять весь текст из файла
-
-			// храним строку не как элемент массива,
-			// а как объект (Line) с ссылкой на весь текст 
-			// и смещение - начальная и конечная позиции включительно
-			// нумерация начинается с нуля
-
-			// сначала считаем сколько строк во всем буфере
-			// выделяем offset-ы и создаём массив объектов Line 
-			//   для каждого объекта Line считаем отступ и проверяем,
-			//   допустимы ли такие отступы
-
-
-			// tamplates:
-			// 	для scalar => $"(\t)*(N)(*)"
-			// 	для list => $"(\t)*(N)\t- (*)"
-			// 	для dictionary => $"(\t)*(N)(*)"
-
-			// 	Qualifier/Token:
-			//		TypeQualifier - определяет тип строки
-			//		Peeker - ищет в строках подстроки и др. операции
-			// 		Splitter - создаёт токены строк и создаёт на них ссылки
-
-			//	
-
 		}
 	}
 }
