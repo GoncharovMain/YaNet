@@ -23,5 +23,10 @@ namespace YaNet
 		{
 			return null;
 		}
+
+		public Line this[int index]
+		{
+			get => new Line(_buffer, _offsets[index]);
+		}
 	}
 }

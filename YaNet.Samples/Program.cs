@@ -74,6 +74,8 @@ namespace YaNet.Samples
 			parser.Deserialize();
 
 
+			Console.WriteLine(new Peeker(yaml).ToCharCode());
+
 
 			
 			// levelIndent, tokenIndent, tokenType, lengthTokenType, start, end, peeker, isList, isDict, isScalar

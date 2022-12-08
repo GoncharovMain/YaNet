@@ -6,3 +6,23 @@ countries:
 	- Russia
 	- China
 	- USA
+
+#
+
+persons:
+	- name: John
+	  age: 18
+	- name: Bob
+	  age: 25
+	- name: Patrick
+	  age: 23
+
+#
+
+persons:
+	- name: John
+		age: 18
+	- name: Bob
+		age: 25
+	- name: Patrick
+		age: 23

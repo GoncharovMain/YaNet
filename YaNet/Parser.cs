@@ -36,6 +36,7 @@ namespace YaNet
 			{
 				
 				// handle variant when line is item of list
+				// two spaces "  " and "- "
 				//	persons:
 				//		- name: John
 				//			age: 18
