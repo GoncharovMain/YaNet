@@ -3,6 +3,22 @@ using YaNet.Lines;
 
 namespace YaNet
 {
+	public class Cascade
+	{
+
+		
+		
+		public void Next()
+		{
+
+		}
+
+		public void Current()
+		{
+
+		}
+	}
+
 	public class Parser
 	{
 		private StringBuilder _buffer;
@@ -26,6 +42,11 @@ namespace YaNet
 		}
 
 		public string this[int i] => _lines[i].Buffer.ToString(_lines[i].Offset.Start, _lines[i].Offset.Length - 1);
+
+		public void Cascade()
+		{
+
+		}
 
 		public void Deserialize()
 		{

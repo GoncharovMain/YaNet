@@ -1,28 +1,59 @@
 person:
-	name: Bob
-	age: 18
-	sex: male
-countries:
-	- Russia
-	- China
-	- USA
-
-#
-
-persons:
-	- name: John
-	  age: 18
-	- name: Bob
-	  age: 25
-	- name: Patrick
-	  age: 23
-
-#
-
-persons:
-	- name: John
+	personal data:
+		firstName: Bob
+		middleName: John
+		secondName: Patick`
 		age: 18
-	- name: Bob
-		age: 25
-	- name: Patrick
-		age: 23
+		sex: male
+	address:
+		city: Moscow
+		street: Red
+		home: 3
+	visitCountries:
+		- Russia
+		- China
+		- USA
+	friends:
+		- id: 23
+		  firstName: Albert
+		  middleName: Allen
+		  secondName: Bert
+		- id: 56
+		  firstName: 
+		  middleName: Cecil
+		  secondName: Clarence
+		- id: 87
+		  firstName: Bob
+		  middleName: Elliot
+		  secondName: Elmer
+		- id: 101
+		  firstName: Ernie
+		  middleName: Eugene
+		  secondName: Fergus
+	languages:
+		- English
+		- Russain
+		- Japanese
+		- Spanish
+ip address:
+	ip: "192.168.0.1"
+	port: 8080
+	protocol:
+		tcp: true
+		udp: true
+matrix:
+	-
+		- 1
+		- 0
+		- 0
+	-
+		- 0
+		- 1
+		- 0
+	-
+		- 0
+		- 0
+		- 1
+matrices:
+	- "[1, 0, 0], [0, 1, 0], [0, 0, 1]"
+	- [5, 0, 0], [0, 7, 0], [0, 0, 5]

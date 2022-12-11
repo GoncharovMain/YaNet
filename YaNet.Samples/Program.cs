@@ -96,7 +96,9 @@ namespace YaNet.Samples
 		{
 			string yaml = "person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles";
 
-			Parser parser = new Parser(yaml);
+
+
+			Parser parser = new Parser(YamlText);
 
 			parser.Deserialize();
 		}
