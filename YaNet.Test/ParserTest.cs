@@ -186,5 +186,17 @@ namespace YaNet.Test
 			Assert.True(new Peeker("person: John", 1) == "erson: John");
 			Assert.True(new Peeker("person: John", 1, 5) == "erson");
 		}
+
+		[Fact]
+		public void ContainsPeeker()
+		{
+			Assert.True(new Peeker("person: John").Contains(": "));
+			Assert.True(new Peeker("person: John").Contains("oh"));
+			Assert.True(new Peeker("person: John").Contains("ers"));
+			Assert.True(new Peeker("person: John").Contains("person: John"));
+
+			Assert.False(new Peeker("person: John").Contains("hnS"));
+			Assert.False(new Peeker("person: John").Contains("Joht"));
+		}
 	}
 }

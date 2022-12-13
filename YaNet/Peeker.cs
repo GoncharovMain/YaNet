@@ -13,6 +13,8 @@ namespace YaNet
 
 		public Mark Mark => new Mark(_start, _end);
 
+		private Mark _mark;
+
 		public int Length => _length;
 		public string Buffer => ToString();
 
@@ -41,6 +43,8 @@ namespace YaNet
 			_buffer = buffer;
 			_start = start;
 			_end = end;
+
+			_mark = new Mark(_start, _end);
 
 			_length = end - start + 1;
 		}
@@ -120,6 +124,44 @@ namespace YaNet
 			}
 		
 			return -1;
+		}
+
+		public bool Contains(char symbol)
+		{
+			for (int i = _start; i <= _end; i++)
+			{
+				if (_buffer[i] == symbol)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public bool Contains(string substring)
+		{
+			bool contain;
+
+			int maxLength = _end - substring.Length + 1;
+
+			for (int i = _start; i <= maxLength; i++)
+			{
+				contain = true;
+
+				for (int j = 0; j < substring.Length; j++)
+				{
+					if (_buffer[i + j] != substring[j])
+					{
+						contain = false;
+					}
+				}
+
+				if (contain)
+					return true;
+			}
+
+			return false;
 		}
 
 		public Mark[] Split(char delimiter = '\n')

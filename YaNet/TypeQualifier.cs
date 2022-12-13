@@ -9,6 +9,10 @@ namespace YaNet
 		private StringBuilder _buffer;
 		private Mark _mark;
 
+		private Row _row;
+
+		public TypeQualifier(StringBuilder text, Row row) => (_row, _buffer) = (row, text);
+
 		public TypeQualifier() { }
 
 		public TypeQualifier(string text) : this(new StringBuilder(text), new Mark(0, text.Length - 1)) { }
@@ -23,32 +27,14 @@ namespace YaNet
 			_buffer = buffer;
 			_mark = mark;
 		}
-		
-		public RowType Quilify()
+
+		public Row QualifyFeature()
 		{
-			int lastIndex = _buffer.Length - 1;
+			bool isKeyValueRow = new Peeker(_buffer, _mark).Contains(": ");
 
-			if (_mark.End + 1 <= lastIndex)
-			{
-				return RowType.NoneRow;
-			}
+			Console.WriteLine($"isKeyValueRow: {isKeyValueRow}");
 
-			int start = _mark.End;
-			int end;
-
-			for (end = start + 1; end < _mark.Length; end++)
-			{
-				if (_buffer[end] == '\n')
-				{
-					break;
-				}
-			}
-			
-			int countIndent = new Peeker(_buffer, start, end).CountIndent("\t");
-
-			
-
-			return RowType.NoneRow;
+			return null;
 		}
 
 

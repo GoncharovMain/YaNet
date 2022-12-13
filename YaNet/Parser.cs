@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using YaNet.Features;
 
 namespace YaNet
@@ -24,7 +24,7 @@ namespace YaNet
 			// new KeyValueRow(),
 			// new KeyValueRow(),
 			// new KeyRow(),
-			// new ItemRow(),
+			new ItemRow(indent: 1, row: (0, 0), item: (0, 0)),
 			// new ItemRow(),
 			// new ItemRow(),
 		};
@@ -50,19 +50,21 @@ namespace YaNet
 
 			_features = new Dictionary<int, Increaser>
 			{
-				// '\t' => 9
-				// '\n' => 10
-				// ':' => 58
-
 				{ 9, () => { _countIndent++; } },
 				{ 10, () => { _countEndRow++; } },
 				{ 58, () => { _countDelimiterKey++; } },
 				{ -1, () => { return; } },
 			};
+
+			_current = 0;
 		}
 		
 		public Row Analize()
 		{	
+			// '\t' => 9
+			// '\n' => 10
+			// ':' => 58
+
 			// 1. отступ
 			// 2. признак элемента коллекции
 			//   2.1. признак элемента как объекта
@@ -72,47 +74,64 @@ namespace YaNet
 			//   3.2. признак ключ: ссылка
 			//   3.2. признак ключ: объект
 
+			// count row
 
 
-			for (int i = 0; i < _rows.Length; i++)
+			int countRow = new Peeker(_buffer).Counter('\n') + 1;
+
+			Console.WriteLine(countRow);
+
+			_rows = new Row[countRow];
+
+
+
+			int currentPosition = 0;
+
+			while(currentPosition < _buffer.Length)
 			{
-				_rows[i].Info();
+				currentPosition = FeatureRow(currentPosition + 1);
+
+				_current++;
+
+				Console.WriteLine(currentPosition);
 			}
 
-
-			Mark mark;
-
-			int start = 0;
-			int end = 1;
-
-			for (int i = _mark.Start; i < _buffer.Length; i++)
-			{
-				if (_buffer[i] == '\t')
-				{
-					_countIndent++;
-					continue;
-				}
-
-				if (_buffer[i] == '-' && _buffer[i + 1] == ' ')
-				{
-					//isElement = true;
-				}
-
-				if (_buffer[i] == ':' && _buffer[i + 1] == ' ')
-				{
-					_countDelimiterKey++;
-					//isKey = true;
-					continue;
-				}
-
-				if (_buffer[i] == '\n')
-				{
-					_countEndRow++;
-					continue;
-				}
-			}
 
 			return null;
+		}
+
+		private int FeatureRow(int lastPosition)
+		{
+			int indent = new Peeker(_buffer, lastPosition).CountIndent("\t");
+
+			Console.WriteLine($"indent: {indent}");
+
+			int start = lastPosition;
+
+			Mark mark = new Mark(lastPosition, _buffer.Length - 1);
+
+			for (; lastPosition < _buffer.Length; lastPosition++)
+			{
+
+				if (_buffer[lastPosition] == '\n')
+				{
+					mark = new Mark(start, lastPosition);
+					break;
+				}
+			}
+
+			
+
+
+
+			TypeQualifier qualifier = new TypeQualifier(_buffer, new Row(indent, mark));
+
+			Row row = qualifier.QualifyFeature();
+
+			_rows[_current] = row;
+			
+
+			return lastPosition;
 		}
 
 		public void IncreaseFeature(char symbol)		
