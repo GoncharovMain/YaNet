@@ -5,17 +5,17 @@ namespace YaNet
 {
 	public class Cascade
 	{
-
-		// ищем признак конца строки
-		// 
-
 		private int _countEndRow;
 		private int _countDelimiterKey;
 		private int _countIndent;
 
 		private StringBuilder _buffer;
 		private int _current;
-		private Mark _marks;
+		private Mark _mark;
+
+		private delegate void Increaser();
+
+		private Dictionary<int, Increaser> _features;
 
 		public Cascade(string text) : this(new StringBuilder(text)) { }
 
@@ -25,33 +25,78 @@ namespace YaNet
 			_countDelimiterKey = 0;
 			_countIndent = 0;
 			_buffer = text;
+
+			_mark = new Mark(0, 1);
+
+			_features = new Dictionary<int, Increaser>
+			{
+				// '\t' => 9
+				// '\n' => 10
+				// ':' => 58
+
+				{ 9, () => { _countIndent++; } },
+				{ 10, () => { _countEndRow++; } },
+				{ 58, () => { _countDelimiterKey++; } },
+				{ -1, () => { return; } },
+			};
 		}
 		
 		public void Analize()
-		{
-			for (int i = 0; i < _buffer.Length; i++)
+		{	
+			// 1. отступ
+			// 2. признак элемента коллекции
+			//   2.1. признак элемента как объекта
+			//   2.2. признак элемента как простого элемента
+			// 3. признак ключ:
+			//   3.1. признак ключ: значение
+			//   3.2. признак ключ: ссылка
+			//   3.2. признак ключ: объект
+
+			// 1. от
+
+
+			Mark mark;
+
+			int start = 0;
+			int end = 1;
+
+			for (int i = _mark.Start; i < _buffer.Length; i++)
 			{
-				if (_buffer[i] == '\n')
-				{
-					_countEndRow++;
-					continue;
-				}
-
-				if (_buffer[i] == ':')
-				{
-					if (_buffer[i + 1] == ' ')
-					{
-						_countDelimiterKey++;
-						continue;
-					}
-				}
-
 				if (_buffer[i] == '\t')
 				{
 					_countIndent++;
 					continue;
 				}
+
+				if (_buffer[i] == '-' && _buffer[i + 1] == ' ')
+				{
+					//isElement = true;
+				}
+
+				if (_buffer[i] == ':' && _buffer[i + 1] == ' ')
+				{
+					_countDelimiterKey++;
+					//isKey = true;
+					continue;
+				}
+
+				if (_buffer[i] == '\n')
+				{
+					_countEndRow++;
+					continue;
+				}
 			}
+		}
+
+		public void IncreaseFeature(char symbol)		
+		{
+			switch(symbol)
+			{
+				case '\n': _countEndRow++; break;
+				case '\t': _countIndent++; break;
+				case ':': _countDelimiterKey++; break;
+				default: break;
+			};
 		}
 
 		public void Info()
