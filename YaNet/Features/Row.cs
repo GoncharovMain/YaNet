@@ -7,6 +7,10 @@ namespace YaNet.Features
 	{
 		private Mark _row;
 
+		private int _indent;
+
+		public int Indent => _row.Start;
+
 		public Type Type { get; private set; }
 
 
@@ -15,7 +19,7 @@ namespace YaNet.Features
 		protected Row(Mark row, Type type) => (_row, Type) = (row, type);
 
 
-		public Row(Row row) : this(row._row) => Type = typeof(Row);
+		public Row(Row row) : this(row._row) { }
 
 		public Row(Mark row) => (_row, Type) = (row, typeof(Row));
 	}
@@ -54,7 +58,7 @@ namespace YaNet.Features
 	public class ItemRow : Row
 	{
 		private Mark _item;
-		
+
 
 		public ItemRow(Row row, Mark item) 
 			: base(row, typeof(ItemRow)) => _item = item;

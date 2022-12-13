@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using YaNet.Rows;
+using YaNet.Features;
 
 namespace YaNet
 {
@@ -8,6 +8,26 @@ namespace YaNet
 		private int _countEndRow;
 		private int _countDelimiterKey;
 		private int _countIndent;
+
+
+		private Row[] _rows = new Row[]
+		{
+			new KeyRow(indent: 0, row: new Mark(0, 7), key: new Mark(0, 7)),
+			new KeyRow(indent: 1, row: new Mark(2, 15), key: new Mark(0, 17)),
+			new KeyValueRow(indent: 2, row: new Mark(3, ), key: new Mark(), value: new Mark()),
+			new KeyValueRow(indent: 2, row: new Mark()),
+			new KeyValueRow(),
+			new KeyValueRow(),
+			new KeyValueRow(),
+			new KeyRow(),
+			new KeyValueRow(),
+			new KeyValueRow(),
+			new KeyValueRow(),
+			new KeyRow(),
+			new ItemRow(),
+			new ItemRow(),
+			new ItemRow(),
+		};
 
 		private StringBuilder _buffer;
 		private int _current;
@@ -41,7 +61,7 @@ namespace YaNet
 			};
 		}
 		
-		public void Analize()
+		public Row Analize()
 		{	
 			// 1. отступ
 			// 2. признак элемента коллекции
@@ -51,8 +71,6 @@ namespace YaNet
 			//   3.1. признак ключ: значение
 			//   3.2. признак ключ: ссылка
 			//   3.2. признак ключ: объект
-
-			// 1. от
 
 
 			Mark mark;
@@ -86,6 +104,8 @@ namespace YaNet
 					continue;
 				}
 			}
+
+			return new Row(new Mark(0, 0));
 		}
 
 		public void IncreaseFeature(char symbol)		
@@ -119,9 +139,6 @@ namespace YaNet
 	{
 		private StringBuilder _buffer;
 
-		private Row[] _rows;
-
-
 		public Parser(StringBuilder text)
 		{
 			_buffer = text;
@@ -129,63 +146,10 @@ namespace YaNet
 
 		public Parser(string text) : this(new StringBuilder(text)) { }
 
-		public void PrintRows()
-		{
-			for (int i = 0; i < _rows.Length; i++)
-			{
-				Console.WriteLine($"[{i:00}] [{_rows[i].CountIndent}][{this[i]}]");
-			}
-		}
-
-		public string this[int i] => _rows[i].Buffer.ToString(_rows[i].Mark.Start, _rows[i].Mark.Length - 1);
-
-		public void Cascade()
-		{
-
-		}
 
 		public void Deserialize()
 		{
-			Peeker peeker = new Peeker(_buffer);
-
-
-			Mark[] marks = peeker.Split('\n');
-
-			_rows = new Row[marks.Length];
-
-
-			for (int i = 0; i < _rows.Length; i++)
-			{
-				_rows[i] = new Row(_buffer, marks[i]);
-			}
-
-			for (int i = 0; i < _rows.Length - 1; i++)
-			{
-				
-				// handle variant when row is item of list
-				// two spaces "  " and "- "
-				//	persons:
-				//		- name: John
-				//			age: 18
-				//		- name: Bob
-				// 			age: 25
-				//		- name: Patrick
-				//			age: 23
-
-				if (_rows[i].CountIndent + 1 < _rows[i + 1].CountIndent)
-				{
-					throw new Exception($"Row {i + 1}: '{_rows[i + 1]}' has not correct indent.");
-				}
-			}
-
-
-			PrintRows();
-
-
 			
-
-
 		}
-
 	}
 }

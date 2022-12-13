@@ -656,8 +656,8 @@ token: ${token-ref}
 `:\n(\t)*- ` -> (token-list)
 `: ${token-ref}\n(\t)*- ` -> (token-list) (override)
 
-`:\r\n(\t)*- ` -> (token-list)
-`: ${token-ref}\r\n(\t)*- ` -> (token-list) (override)
+`:\n(\t)*- ` -> (token-list)
+`: ${token-ref}\n(\t)*- ` -> (token-list) (override)
 
 (\t)* - count tab indent is LevelIndent
 
@@ -670,7 +670,7 @@ token:
   - token
 
 # token:\n\t- token\n\t- token\n\t- token\n\t- token
-# token:\r\n\t- token\r\n\t- token\r\n\t- token\r\n\t- token
+# token:\n\t- token\n\t- token\n\t- token\n\t- token
 
 # `\n\t- `{token}`\n\t- `{token}`\n\t- `{token}`\n\t- `{token}
 # `\t- `{token}`\n\t- `{token}`\n\t- `{token}`\n\t- `{token}
@@ -680,7 +680,7 @@ token:
 # delimiter between items of list for LF and CRLF
 
 `\n\t- `
-`\r\n\t- `
+`\n\t- `
 
 
 # dictonary or object 
@@ -695,8 +695,8 @@ token:
 `: ${token-reference}\n(\t)*` -> (token-object, token-dictionary) (override)
 
 
-`:\r\n(\t)*` -> (token-object, token-dictionary)
-`:\r\n${token-reference}(\t)*` -> (token-object, token-dictionary) (override)
+`:\n(\t)*` -> (token-object, token-dictionary)
+`:\n${token-reference}(\t)*` -> (token-object, token-dictionary) (override)
 
 
 # delimiter between items of object property or items of dictionary
@@ -714,11 +714,11 @@ token:
 # delete first token (key) and delimiter for LF and CRLF
 
 # {token: token}`\n\t`{token: token}`\n\t`{token: token}`\n\t`{token: token}
-# {token: token}`\r\n\t`{token: token}`\r\n\t`{token: token}`\r\n\t`{token: token}
+# {token: token}`\n\t`{token: token}`\n\t`{token: token}`\n\t`{token: token}
 
 # delimiter:
 `\n(\t)*`
-`\r\n(\t)*`
+`\n(\t)*`
 
 
 token:
@@ -745,3 +745,6 @@ Exceptions:
 
   TypeException:
     - Int32Exception
+
+
+person:\n\tpersonal data:\n\t\tfirstName: Bob\n\t\tmiddleName: John\n\t\tsecondName: Patick`\n\t\tage: 18\n\t\tsex: male\n\taddress:\n\t\tcity: Moscow\n\t\tstreet: Red\n\t\thome: 3\n\tvisitCountries:\n\t\t- Russia\n\t\t- China\n\t\t- USA\n\tfriends:
