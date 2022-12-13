@@ -1,21 +1,10 @@
 using System.Text;
-using YaNet.Rows;
+using YaNet.Features;
 
 namespace YaNet
 {
 	public class TypeQualifier
 	{
-		// levelIndent, 
-		// tokenIndent, 
-		// tokenType, 
-		// lengthTokenType, 
-		// start, 
-		// end, 
-		// peeker, 
-		// isList, 
-		// isDict, 
-		// isScalar
-
 		private Peeker _peeker;
 		private StringBuilder _buffer;
 		private Mark _mark;
@@ -89,16 +78,5 @@ namespace YaNet
 
 			return nextIndent;
 		}
-
-
-		public static Row GetRow(RowType typeList)
-			=> typeList switch
-			{
-				RowType.Scalar => new ScalarRow(),
-				RowType.List => new ListRow(),
-				RowType.Dictionary => new DictionaryRow(),
-				RowType.Object => new ObjectRow(),
-				_ => new Row()
-			};
 	}
 }

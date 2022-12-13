@@ -1,11 +1,11 @@
-using YaNet.Rows;
+using YaNet.Features;
 
 namespace YaNet
 {
-	public class Mark
+	public struct Mark
 	{
-		public int Start { get; set; }
-		public int End { get; set; }
+		public int Start { get; private set; }
+		public int End { get; private set; }
 		public int Length => End - Start + 1;
 
 		public Mark(int start, int end)
@@ -14,12 +14,12 @@ namespace YaNet
 			End = end;
 		}
 
-		public static implicit operator String(Mark offset)
-			=> offset.ToString();
+		public static implicit operator String(Mark mark)
+			=> mark.ToString();
 
-		public static implicit operator Mark((int start, int end) offset)
-			=> new Mark(offset.start, offset.end);
+		public static implicit operator Mark((int start, int end) mark)
+			=> new Mark(mark.start, mark.end);
 
-		public override string ToString() => $"Start: {Start} end: {End} length: {Length}";
+		public override string ToString() => $"[{Start}:{End}:{Length}]";
 	}
 }

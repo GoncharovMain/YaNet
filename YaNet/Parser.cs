@@ -12,21 +12,21 @@ namespace YaNet
 
 		private Row[] _rows = new Row[]
 		{
-			new KeyRow(indent: 0, row: new Mark(0, 7), key: new Mark(0, 7)),
-			new KeyRow(indent: 1, row: new Mark(2, 15), key: new Mark(0, 17)),
-			new KeyValueRow(indent: 2, row: new Mark(3, ), key: new Mark(), value: new Mark()),
-			new KeyValueRow(indent: 2, row: new Mark()),
-			new KeyValueRow(),
-			new KeyValueRow(),
-			new KeyValueRow(),
-			new KeyRow(),
-			new KeyValueRow(),
-			new KeyValueRow(),
-			new KeyValueRow(),
-			new KeyRow(),
-			new ItemRow(),
-			new ItemRow(),
-			new ItemRow(),
+			new KeyRow(indent: 0, row: (0, 7), key: (0, 7)),
+			new KeyRow(indent: 1, row: (2, 15), key: (0, 17)),
+			new KeyValueRow(indent: 2, row: (3, 17), key: (0, 0), value: (0, 0)),
+			new KeyValueRow(indent: 2, row: (0, 0), key: (0, 0), value: (0, 0)),
+			// new KeyValueRow(),
+			// new KeyValueRow(),
+			// new KeyValueRow(),
+			// new KeyRow(),
+			// new KeyValueRow(),
+			// new KeyValueRow(),
+			// new KeyValueRow(),
+			// new KeyRow(),
+			// new ItemRow(),
+			// new ItemRow(),
+			// new ItemRow(),
 		};
 
 		private StringBuilder _buffer;
@@ -73,6 +73,13 @@ namespace YaNet
 			//   3.2. признак ключ: объект
 
 
+
+			for (int i = 0; i < _rows.Length; i++)
+			{
+				_rows[i].Info();
+			}
+
+
 			Mark mark;
 
 			int start = 0;
@@ -105,7 +112,7 @@ namespace YaNet
 				}
 			}
 
-			return new Row(new Mark(0, 0));
+			return null;
 		}
 
 		public void IncreaseFeature(char symbol)		

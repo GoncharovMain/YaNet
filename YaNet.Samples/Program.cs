@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using YaNet;
-using YaNet.Rows;
+using YaNet.Features;
 
 namespace YaNet.Samples
 {
