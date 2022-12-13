@@ -1,12 +1,12 @@
 namespace YaNet
 {
-	public enum LineType
+	public enum RowType
 	{
 		Scalar,
 		List,
 		Dictionary,
 		Object,
 
-		NoneLine
+		NoneRow
 	}
 }

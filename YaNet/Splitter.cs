@@ -1,5 +1,5 @@
 using System.Text;
-using YaNet.Lines;
+using YaNet.Rows;
 
 namespace YaNet
 {
@@ -7,45 +7,45 @@ namespace YaNet
 	{
 		private StringBuilder _buffer;
 
-		private Offset[] _offsets;
+		private Mark[] _marks;
 
-		public Offset[] Offsets => _offsets;
+		public Mark[] Marks => _marks;
 
-		private Line[] _lines;
+		private Row[] _rows;
 
 		private int[] _lengthIndents;
 
-		public int Length => _lines.Length;
+		public int Length => _rows.Length;
 
 		public Splitter(string text) : this(new StringBuilder(text)) { }
 
 		public Splitter(StringBuilder text) => _buffer = text;
 
-		public Splitter(StringBuilder text, Offset[] offsets)
+		public Splitter(StringBuilder text, Mark[] marks)
 		{
 			_buffer = text;
-			_offsets = offsets;
+			_marks = marks;
 
-			_lines = new Line[offsets.Length];
+			_rows = new Row[marks.Length];
 
-			for (int i = 0; i < offsets.Length; i++)
+			for (int i = 0; i < marks.Length; i++)
 			{
-				_lines[i] = new Line(_buffer, offsets[i]);
+				_rows[i] = new Row(_buffer, marks[i]);
 			}
 		}
 
-		public Splitter(Line line) : this(new Line[] { line }) { }
+		public Splitter(Row row) : this(new Row[] { row }) { }
 
 
-		public Splitter(Line[] lines)
+		public Splitter(Row[] rows)
 		{
-			_buffer = lines[0].Buffer;
+			_buffer = rows[0].Buffer;
 
-			_lines = lines;
+			_rows = rows;
 
-			_offsets = lines.Select(line => line.Offset).ToArray();
+			_marks = rows.Select(row => row.Mark).ToArray();
 
-			_lengthIndents = lines.Select(line => line.CountIndent).ToArray();
+			_lengthIndents = rows.Select(row => row.CountIndent).ToArray();
 		}
 
 
@@ -54,9 +54,9 @@ namespace YaNet
 		{
 			int countLevel = 0;
 
-			for (int i = 0; i < _lines.Length; i++)
+			for (int i = 0; i < _rows.Length; i++)
 			{
-				if (_lines[i].CountIndent == levelIndent)
+				if (_rows[i].CountIndent == levelIndent)
 				{
 					countLevel++;
 				}
@@ -70,28 +70,28 @@ namespace YaNet
 
 			int[] indexes = new int[countLevel];
 
-			for (int i = 0, j = 0; i < _offsets.Length; i++)
+			for (int i = 0, j = 0; i < _marks.Length; i++)
 			{
-				if (_lines[i].CountIndent == levelIndent)
+				if (_rows[i].CountIndent == levelIndent)
 				{
 					indexes[j++] = i;
 				}
 			}
 
-			Offset[] offsetsLevel = new Offset[countLevel];
+			Mark[] marksLevel = new Mark[countLevel];
 
 			for (int i = 0; i < indexes.Length - 1; i++)
 			{
-				offsetsLevel[i] = new Offset(_offsets[indexes[i]].Start, _offsets[indexes[i + 1]].Start - 1);
+				marksLevel[i] = new Mark(_marks[indexes[i]].Start, _marks[indexes[i + 1]].Start - 1);
 			}
 
-			offsetsLevel[^1] = new Offset(_offsets[indexes[^1]].Start, _offsets[^1].End);
+			marksLevel[^1] = new Mark(_marks[indexes[^1]].Start, _marks[^1].End);
 
 
-			return new Splitter(_buffer, offsetsLevel);
+			return new Splitter(_buffer, marksLevel);
 		}
 
-		public Line this[int index] => new Line(_buffer, _offsets[index]);
+		public Row this[int index] => new Row(_buffer, _marks[index]);
 		
 	}
 }

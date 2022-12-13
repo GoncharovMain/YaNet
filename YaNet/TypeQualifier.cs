@@ -1,5 +1,5 @@
 using System.Text;
-using YaNet.Lines;
+using YaNet.Rows;
 
 namespace YaNet
 {
@@ -18,36 +18,36 @@ namespace YaNet
 
 		private Peeker _peeker;
 		private StringBuilder _buffer;
-		private Offset _offset;
+		private Mark _mark;
 
 		public TypeQualifier() { }
 
-		public TypeQualifier(string text) : this(new StringBuilder(text), new Offset(0, text.Length - 1)) { }
+		public TypeQualifier(string text) : this(new StringBuilder(text), new Mark(0, text.Length - 1)) { }
 
-		public TypeQualifier(StringBuilder buffer) : this(buffer, new Offset(0, buffer.Length)) { }
+		public TypeQualifier(StringBuilder buffer) : this(buffer, new Mark(0, buffer.Length)) { }
 
-		public TypeQualifier(string text, Offset offset) : this(new StringBuilder(text), offset) { }
+		public TypeQualifier(string text, Mark mark) : this(new StringBuilder(text), mark) { }
 
-		public TypeQualifier(StringBuilder buffer, Offset offset)
+		public TypeQualifier(StringBuilder buffer, Mark mark)
 		{
-			_peeker = new Peeker(buffer, offset.Start, offset.End);
+			_peeker = new Peeker(buffer, mark.Start, mark.End);
 			_buffer = buffer;
-			_offset = offset;
+			_mark = mark;
 		}
 		
-		public LineType Quilify()
+		public RowType Quilify()
 		{
 			int lastIndex = _buffer.Length - 1;
 
-			if (_offset.End + 1 <= lastIndex)
+			if (_mark.End + 1 <= lastIndex)
 			{
-				return LineType.NoneLine;
+				return RowType.NoneRow;
 			}
 
-			int start = _offset.End;
+			int start = _mark.End;
 			int end;
 
-			for (end = start + 1; end < _offset.Length; end++)
+			for (end = start + 1; end < _mark.Length; end++)
 			{
 				if (_buffer[end] == '\n')
 				{
@@ -59,7 +59,7 @@ namespace YaNet
 
 			
 
-			return LineType.NoneLine;
+			return RowType.NoneRow;
 		}
 
 
@@ -91,14 +91,14 @@ namespace YaNet
 		}
 
 
-		public static Line GetLine(LineType typeList)
+		public static Row GetRow(RowType typeList)
 			=> typeList switch
 			{
-				LineType.Scalar => new ScalarLine(),
-				LineType.List => new ListLine(),
-				LineType.Dictionary => new DictionaryLine(),
-				LineType.Object => new ObjectLine(),
-				_ => new Line()
+				RowType.Scalar => new ScalarRow(),
+				RowType.List => new ListRow(),
+				RowType.Dictionary => new DictionaryRow(),
+				RowType.Object => new ObjectRow(),
+				_ => new Row()
 			};
 	}
 }

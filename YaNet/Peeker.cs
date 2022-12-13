@@ -11,7 +11,7 @@ namespace YaNet
 
 		private int _length;
 
-		public Offset Offset => new Offset(_start, _end);
+		public Mark Mark => new Mark(_start, _end);
 
 		public int Length => _length;
 		public string Buffer => ToString();
@@ -45,7 +45,7 @@ namespace YaNet
 			_length = end - start + 1;
 		}
 
-		public Peeker(StringBuilder buffer, Offset offset) : this(buffer, offset.Start, offset.End) { }
+		public Peeker(StringBuilder buffer, Mark mark) : this(buffer, mark.Start, mark.End) { }
 
 		public string Substring(int startIndex, int endIndex)
 		{
@@ -122,11 +122,11 @@ namespace YaNet
 			return -1;
 		}
 
-		public Offset[] Split(char delimiter = '\n')
+		public Mark[] Split(char delimiter = '\n')
 		{
-			int countLines = Counter(delimiter) + 1;
+			int countRows = Counter(delimiter) + 1;
 			
-			Offset[] offsets = new Offset[countLines];
+			Mark[] marks = new Mark[countRows];
 
 			int i = 0;
 
@@ -136,14 +136,14 @@ namespace YaNet
 			{
 				if (_buffer[end] == delimiter)
 				{
-					offsets[i++] = new Offset(start, end);
+					marks[i++] = new Mark(start, end);
 					start = end + 1;
 				}
 			}
 
-			offsets[^1] = new Offset(start, _end);
+			marks[^1] = new Mark(start, _end);
 
-			return offsets;
+			return marks;
 		}
 
 		public int Counter(char symbol)
@@ -216,22 +216,22 @@ namespace YaNet
 			return countIndent;
 		}
 
-		public static bool operator ==(Peeker peeker, string line)
+		public static bool operator ==(Peeker peeker, string row)
 		{
-			if (peeker._length != line.Length)
+			if (peeker._length != row.Length)
 				return false;
 
 			for (int i = peeker._start, j = 0; i <= peeker._end; i++, j++)
 			{
-				if (peeker._buffer[i] != line[j])
+				if (peeker._buffer[i] != row[j])
 					return false;
 			}
 
 			return true;
 		}
 
-		public static bool operator !=(Peeker peeker, string line)
-			=> !(peeker == line);
+		public static bool operator !=(Peeker peeker, string row)
+			=> !(peeker == row);
 
 		public override bool Equals(object obj)
 			=> this == (string)obj;

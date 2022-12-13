@@ -1,12 +1,63 @@
 ﻿using System.Text;
-using YaNet.Lines;
+using YaNet.Rows;
 
 namespace YaNet
 {
 	public class Cascade
 	{
 
+		// ищем признак конца строки
+		// 
+
+		private int _countEndRow;
+		private int _countDelimiterKey;
+		private int _countIndent;
+
+		private StringBuilder _buffer;
+		private int _current;
+		private Mark _marks;
+
+		public Cascade(string text) : this(new StringBuilder(text)) { }
+
+		public Cascade(StringBuilder text)
+		{
+			_countEndRow = 0;
+			_countDelimiterKey = 0;
+			_countIndent = 0;
+			_buffer = text;
+		}
 		
+		public void Analize()
+		{
+			for (int i = 0; i < _buffer.Length; i++)
+			{
+				if (_buffer[i] == '\n')
+				{
+					_countEndRow++;
+					continue;
+				}
+
+				if (_buffer[i] == ':')
+				{
+					if (_buffer[i + 1] == ' ')
+					{
+						_countDelimiterKey++;
+						continue;
+					}
+				}
+
+				if (_buffer[i] == '\t')
+				{
+					_countIndent++;
+					continue;
+				}
+			}
+		}
+
+		public void Info()
+		{
+			Console.WriteLine($"end lines: {_countEndRow} delimiters: {_countDelimiterKey} indents: {_countIndent}");
+		}
 		
 		public void Next()
 		{
@@ -23,7 +74,7 @@ namespace YaNet
 	{
 		private StringBuilder _buffer;
 
-		private Line[] _lines;
+		private Row[] _rows;
 
 
 		public Parser(StringBuilder text)
@@ -33,15 +84,15 @@ namespace YaNet
 
 		public Parser(string text) : this(new StringBuilder(text)) { }
 
-		public void PrintLines()
+		public void PrintRows()
 		{
-			for (int i = 0; i < _lines.Length; i++)
+			for (int i = 0; i < _rows.Length; i++)
 			{
-				Console.WriteLine($"[{i:00}] [{_lines[i].CountIndent}][{this[i]}]");
+				Console.WriteLine($"[{i:00}] [{_rows[i].CountIndent}][{this[i]}]");
 			}
 		}
 
-		public string this[int i] => _lines[i].Buffer.ToString(_lines[i].Offset.Start, _lines[i].Offset.Length - 1);
+		public string this[int i] => _rows[i].Buffer.ToString(_rows[i].Mark.Start, _rows[i].Mark.Length - 1);
 
 		public void Cascade()
 		{
@@ -53,20 +104,20 @@ namespace YaNet
 			Peeker peeker = new Peeker(_buffer);
 
 
-			Offset[] offsets = peeker.Split('\n');
+			Mark[] marks = peeker.Split('\n');
 
-			_lines = new Line[offsets.Length];
+			_rows = new Row[marks.Length];
 
 
-			for (int i = 0; i < _lines.Length; i++)
+			for (int i = 0; i < _rows.Length; i++)
 			{
-				_lines[i] = new Line(_buffer, offsets[i]);
+				_rows[i] = new Row(_buffer, marks[i]);
 			}
 
-			for (int i = 0; i < _lines.Length - 1; i++)
+			for (int i = 0; i < _rows.Length - 1; i++)
 			{
 				
-				// handle variant when line is item of list
+				// handle variant when row is item of list
 				// two spaces "  " and "- "
 				//	persons:
 				//		- name: John
@@ -76,14 +127,14 @@ namespace YaNet
 				//		- name: Patrick
 				//			age: 23
 
-				if (_lines[i].CountIndent + 1 < _lines[i + 1].CountIndent)
+				if (_rows[i].CountIndent + 1 < _rows[i + 1].CountIndent)
 				{
-					throw new Exception($"Line {i + 1}: '{_lines[i + 1]}' has not correct indent.");
+					throw new Exception($"Row {i + 1}: '{_rows[i + 1]}' has not correct indent.");
 				}
 			}
 
 
-			PrintLines();
+			PrintRows();
 
 
 			

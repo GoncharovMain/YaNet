@@ -737,3 +737,11 @@ token:
 # \n - delimiter
 # \t - count tab is level indent
 
+Exceptions:
+  SyntaxException:
+    - IndentException
+    - DelimiterException
+    - ReferenceException
+
+  TypeException:
+    - Int32Exception

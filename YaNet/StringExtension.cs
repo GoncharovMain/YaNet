@@ -5,7 +5,7 @@ namespace YaNet
 		public static string Repeat(this char symbol, int count)
 			=> new String(symbol, count);
 
-		public static string Repeat(this string line, int count)
-			=> String.Join(line, count);
+		public static string Repeat(this string row, int count)
+			=> String.Join(row, count);
 	}
 }

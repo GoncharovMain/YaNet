@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using YaNet;
-using YaNet.Lines;
+using YaNet.Rows;
 
 namespace YaNet.Samples
 {
@@ -10,12 +10,12 @@ namespace YaNet.Samples
 		public const string DictDelimiter = ": ";
 
 		public const char Delimiter = ':';
-		public const char EndLine = '\n';
+		public const char EndRow = '\n';
 		public const string SpaceIndent = "  ";
 		public const char TabIndent = '\t';
 	}
 
-	public enum LineBreak
+	public enum RowBreak
 	{
 		LF, CRLF
 	}
@@ -90,13 +90,18 @@ namespace YaNet.Samples
 
 		public static string YamlText => File.ReadAllText(CurrentDirectory);
 
-		public static string[] YamlLines => File.ReadAllLines(CurrentDirectory);
+		public static string[] YamlRows => File.ReadAllLines(CurrentDirectory);
 
 		public static void Main()
 		{
 			string yaml = "person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles";
 
 
+			Cascade cascade = new Cascade(yaml);
+
+			cascade.Analize();
+			cascade.Info();
+			
 
 			Parser parser = new Parser(YamlText);
 
