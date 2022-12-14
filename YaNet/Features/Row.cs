@@ -9,6 +9,10 @@ namespace YaNet.Features
 
 		protected int _indent;
 
+		public int Indent => _indent;
+
+		public Mark Mark => _row;
+
 
 		public Type Type { get; private set; }
 
@@ -23,7 +27,7 @@ namespace YaNet.Features
 
 
 		public virtual void Info() 
-			=> Console.WriteLine($"indent: {_indent} row: {_row} type: {Type.Name}");
+			=> Console.WriteLine($"[{_indent}] row: {_row} type: {Type.Name}");
 	}
 
 	public class KeyRow : Row
@@ -45,7 +49,7 @@ namespace YaNet.Features
 			: base(indent, row, typeof(KeyRow)) => _key = key;
 
 		public override void Info() 
-			=> Console.WriteLine($"indent: {_indent} row: {_row} type: {Type.Name} key: {_key}");
+			=> Console.WriteLine($"[{_indent}] row: {_row} type: {Type.Name} key: {_key}");
 	}
 
 	public class KeyValueRow : KeyRow
@@ -60,7 +64,7 @@ namespace YaNet.Features
 			: base(indent, row, key, typeof(KeyValueRow)) => _value = value;
 
 		public override void Info() 
-			=> Console.WriteLine($"indent: {_indent} row: {_row} type: {Type.Name} key: {_key} value: {_value}");
+			=> Console.WriteLine($"[{_indent}] row: {_row} type: {Type.Name} key: {_key} value: {_value}");
 	}
 
 	public class ItemRow : Row
@@ -75,32 +79,43 @@ namespace YaNet.Features
 			: base(indent, row, typeof(ItemRow)) => _item = item;
 
 		public override void Info() 
-			=> Console.WriteLine($"indent: {_indent} row: {_row} type: {Type.Name} item: {_item}");
+			=> Console.WriteLine($"[{_indent}] row: {_row} type: {Type.Name} item: {_item}");
+	}
+
+	public class ItemKeyRow : Row
+	{
+		private Mark _key;
+
+		public ItemKeyRow(int indent, Row row, Mark key) 
+			: base(indent, row, typeof(ItemKeyRow)) => _key = key;
+
+		public ItemKeyRow(int indent, Mark row, Mark key) 
+			: base(indent, row, typeof(ItemKeyRow)) => _key = key;
+
+		public override void Info() 
+			=> Console.WriteLine($"[{_indent}] row: {_row} type: {Type.Name} item: {_key}");
 	}
 
 	public class ItemKeyValueRow : Row
 	{
-		private Mark _item;
 		private Mark _key;
 		private Mark _value;
 
-		public ItemKeyValueRow(int indent, Row row, Mark item, Mark key, Mark value)
+		public ItemKeyValueRow(int indent, Row row, Mark key, Mark value)
 			: base(indent, row, typeof(ItemKeyValueRow))
 		{
-			_item = item;
 			_key = key;
 			_value = value;
 		}
 
-		public ItemKeyValueRow(int indent, Mark row, Mark item, Mark key, Mark value) 
+		public ItemKeyValueRow(int indent, Mark row, Mark key, Mark value) 
 			: base(indent, row, typeof(ItemKeyValueRow))
 		{
-			_item = item;
 			_key = key;
 			_value = value;
 		}
 
 		public override void Info() 
-			=> Console.WriteLine($"indent: {_indent} row: {_row} type: {Type.Name} item: {_item} key: {_key} value: {_value}");
+			=> Console.WriteLine($"[{_indent}] row: {_row} type: {Type.Name} key: {_key} value: {_value}");
 	}
 }

@@ -94,9 +94,10 @@ namespace YaNet.Samples
 
 		public static void Main()
 		{
-			string yaml = "person:\n\tname: John\n\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles";
+			string yaml = "person:\n\tname: John\n\t\tage: 18\n\tsex: male\n\tbody:\n\t\tweight: 68\n\t\tgrowth: 180\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles\naddress:\n\tcity: Los Angeles\nnames:\n\t- John\n\t- Bob\n\t- Martin";
 
-
+			yaml = "person:\n\tpersonal data:\n\t\tfirstName: Bob\n\t\tmiddleName: John\n\t\t\t\tsecondName: Patick\n\t\tage: 18\n\t\tsex: male\n\taddress:\n\t\tcity: Moscow\n\t\tstreet: Red\n\t\thome: 3\n\tvisitCountries:\n\t\t- Russia\n\t\t- China\n\t\t- USA\n\tfriends:\n\t\t- id: 23\n\t\t  firstName: Albert\n\t\t  middleName: Allen\n\t\t  secondName: Bert\n\t\t- id: 56\n\t\t  firstName: Patrick\n\t\t  middleName: Cecil\n\t\t  secondName: Clarence\n\t\t- id: 87\n\t\t  firstName: Bob\n\t\t  middleName: Elliot\n\t\t  secondName: Elmer\n\t\t- id: 101\n\t\t  firstName: Ernie\n\t\t  middleName: Eugene\n\t\t  secondName: Fergus\n\tlanguages:\n\t\t- English\n\t\t- Russain\n\t\t- Japanese\n\t\t- Spanish\nip address:\n\tip: \"192.168.0.1\"\n\tport: 8080\n\tprotocol:\n\t\ttcp: true\n\t\tudp: true";
+			
 			Cascade cascade = new Cascade(yaml);
 
 			cascade.Analize();

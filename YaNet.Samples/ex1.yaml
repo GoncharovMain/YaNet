@@ -2,7 +2,7 @@ person:
 	personal data:
 		firstName: Bob
 		middleName: John
-		secondName: Patick`
+		secondName: Patick
 		age: 18
 		sex: male
 	address:
@@ -19,7 +19,7 @@ person:
 		  middleName: Allen
 		  secondName: Bert
 		- id: 56
-		  firstName: 
+		  firstName: Patrick
 		  middleName: Cecil
 		  secondName: Clarence
 		- id: 87

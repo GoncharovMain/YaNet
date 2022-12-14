@@ -1,5 +1,6 @@
-using System.Text;
+﻿using System.Text;
 using YaNet.Features;
+using YaNet.Exceptions;
 
 namespace YaNet
 {
@@ -87,15 +88,32 @@ namespace YaNet
 
 			int currentPosition = 0;
 
+
 			while(currentPosition < _buffer.Length)
 			{
-				currentPosition = FeatureRow(currentPosition + 1);
+				currentPosition = FeatureRow(currentPosition);
 
+				currentPosition++;				
 				_current++;
-
-				Console.WriteLine(currentPosition);
 			}
 
+			// validate indent
+
+			if (_rows[0].Indent > 0)
+			{
+				throw new IndentException($"'{new Peeker(_buffer, _rows[0].Mark)}' not corrent indent.");
+			}
+
+			for (int i = 1; i < _rows.Length; i++)
+			{
+				if (_rows[i].Indent - _rows[i - 1].Indent > 1)
+				{
+					throw new IndentException($"'{new Peeker(_buffer, _rows[i].Mark)}' not corrent indent.");
+				}
+			}
+
+
+			
 
 			return null;
 		}
@@ -104,7 +122,7 @@ namespace YaNet
 		{
 			int indent = new Peeker(_buffer, lastPosition).CountIndent("\t");
 
-			Console.WriteLine($"indent: {indent}");
+			//Console.WriteLine($"indent: {indent}");
 
 			int start = lastPosition;
 
@@ -112,7 +130,6 @@ namespace YaNet
 
 			for (; lastPosition < _buffer.Length; lastPosition++)
 			{
-
 				if (_buffer[lastPosition] == '\n')
 				{
 					mark = new Mark(start, lastPosition);
@@ -121,9 +138,6 @@ namespace YaNet
 			}
 
 			
-
-
-
 			TypeQualifier qualifier = new TypeQualifier(_buffer, new Row(indent, mark));
 
 			Row row = qualifier.QualifyFeature();
@@ -150,15 +164,6 @@ namespace YaNet
 			Console.WriteLine($"end lines: {_countEndRow} delimiters: {_countDelimiterKey} indents: {_countIndent}");
 		}
 		
-		public void Next()
-		{
-
-		}
-
-		public void Current()
-		{
-
-		}
 	}
 
 	public class Parser
