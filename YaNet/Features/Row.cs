@@ -34,6 +34,8 @@ namespace YaNet.Features
 	{
 		protected Mark _key;
 
+		public Mark Key => _key;
+
 
 		protected KeyRow(int indent, Row row, Mark key, Type type) 
 			: base(indent, row, type) => _key = key;
@@ -56,6 +58,8 @@ namespace YaNet.Features
 	{
 		private Mark _value;
 
+		public Mark Value => _value;
+
 
 		public KeyValueRow(int indent, Row row, Mark key, Mark value) 
 			: base(indent, row, key, typeof(KeyValueRow)) => _value = value;
@@ -70,6 +74,8 @@ namespace YaNet.Features
 	public class ItemRow : Row
 	{
 		private Mark _item;
+
+		public Mark Item => _item;
 
 
 		public ItemRow(int indent, Row row, Mark item) 
@@ -86,6 +92,8 @@ namespace YaNet.Features
 	{
 		private Mark _key;
 
+		public Mark Key => _key;
+
 		public ItemKeyRow(int indent, Row row, Mark key) 
 			: base(indent, row, typeof(ItemKeyRow)) => _key = key;
 
@@ -100,6 +108,9 @@ namespace YaNet.Features
 	{
 		private Mark _key;
 		private Mark _value;
+
+		public Mark Key => _key;
+		public Mark Value => _value;
 
 		public ItemKeyValueRow(int indent, Row row, Mark key, Mark value)
 			: base(indent, row, typeof(ItemKeyValueRow))
