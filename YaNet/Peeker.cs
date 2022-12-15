@@ -24,6 +24,8 @@ namespace YaNet
 		
 		public Peeker(string buffer, int start, int end) : this(new StringBuilder(buffer), start, end) { }
 
+		public Peeker(string buffer, Mark mark) : this(new StringBuilder(buffer), mark.Start, mark.End) { }
+
 
 		public Peeker(char[] buffer) : this(new String(buffer)) { }
 

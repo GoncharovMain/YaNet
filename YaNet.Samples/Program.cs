@@ -16,6 +16,31 @@ namespace YaNet.Samples
 		public const char TabIndent = '\t';
 	}
 
+	public static class Types
+	{
+		public static Dictionary<string, Type> KeyValueType = new ()
+		{
+            { "byte", typeof(byte) }, 
+            { "sbyte", typeof(sbyte) },
+            { "short", typeof(short) }, 
+            { "ushort", typeof(ushort) },
+            { "int", typeof(int) }, 
+            { "uint", typeof(uint) },
+            { "long", typeof(long) }, 
+            { "ulong", typeof(ulong) },
+            { "float", typeof(float) },
+            { "double", typeof(double) },
+            { "decimal", typeof(decimal) },
+            { "string", typeof(string) },
+            { "char", typeof(char) },
+            { "uint", typeof(uint) },
+            { "bool", typeof(bool) },
+		};
+
+
+
+	}
+
 	public enum RowBreak
 	{
 		LF, CRLF
@@ -87,7 +112,7 @@ namespace YaNet.Samples
 	public class Person
 	{
 		public string Name { get; set; }
-		public string Age { get; set; }
+		public int Age { get; set; }
 	
 		public Address Address { get; set; }
 	}
@@ -95,8 +120,79 @@ namespace YaNet.Samples
 	public class Address
 	{
 		public string City { get; set; }
-		public string Streen { get; set; }
+		public string Street { get; set; }
 	}
+
+	public class KeyReflection<T> where T : new()
+	{
+		private Dictionary<string, PropertyInfo> _properties;
+
+		public Dictionary<string, PropertyInfo> Properties => _properties;
+
+		private T _value;
+
+		public T Value => _value;
+
+		public KeyReflection() : this(new T()) { }
+
+		public KeyReflection(T obj)
+		{
+			_value = obj == null ? default : obj;
+
+			PropertyInfo[] properties = obj.GetType().GetProperties();
+			
+			_properties = new Dictionary<string, PropertyInfo>();
+
+			for (int i = 0; i < properties.Length; i++)
+			{
+				_properties.Add(properties[i].Name.ToLower(), properties[i]);
+			}
+		}
+
+		public object this[string prop]
+		{
+			get
+			{
+				return _properties[prop].GetValue(_value);
+			}
+			set
+			{
+				_properties[prop].SetValue(_value, value);
+			}
+		}
+	}
+
+	// public class InitReflection<T> where T : new()
+	// {
+	// 	private KeyReflection<T> _keyReflection;
+
+	// 	private Row[] _rows;
+
+	// 	private T _value;
+
+	// 	public T Value => _value;
+
+	// 	public InitReflection(Row[] rows)
+	// 	{
+	// 		_keyReflection = new KeyReflection<T>();
+			
+	// 		_value = _keyReflection.Value;
+
+	// 		_rows = rows;
+
+	// 		foreach (var prop in _keyReflection.Properties)
+	// 		{
+	// 			if (prop.TypeName == typeof(int))
+	// 			{
+	// 				KeyValueRow kvr = row as KeyValueRow;
+
+	// 				prop[new Peeker(_buffer, kvr.Key)].SetValue(new Peeker(_buffer, kvr.Value));
+	// 			}
+
+	// 		}
+
+	// 	}
+	// }
 
 	public class Program
 	{
@@ -105,6 +201,32 @@ namespace YaNet.Samples
 		public static string YamlText => File.ReadAllText(CurrentDirectory);
 
 		public static string[] YamlRows => File.ReadAllLines(CurrentDirectory);
+
+		public static T CreateInstance<T>(T value)
+		{
+			return (T)value;
+		}
+
+		public void foo()
+		{
+
+
+			if (_keyReflection["age"].Name == typeof(int))
+			{
+				_keyReflection["age"] = (int)CreateInstance<int>(18);
+			}
+			
+			if (_keyReflection["age"].Name == typeof(double))
+			{
+				_keyReflection["age"] = (double)CreateInstance<double>(3.14);
+			}
+
+			if (_keyReflection["age"].Name == typeof(string))
+			{
+				_keyReflection["age"] = (string)CreateInstance<string>("18");
+			}
+
+		}
 
 		public static void Main()
 		{
@@ -120,28 +242,39 @@ namespace YaNet.Samples
 			//cascade.Info();
 
 
+			KeyValueRow kvr = cascade[0] as KeyValueRow;
 
-			Person person = new Person();
+			Console.WriteLine("key: " + new Peeker(yaml, kvr.Key));
+
+			Console.WriteLine("value: " + new Peeker(yaml, kvr.Value));
 
 
-			PropertyInfo property = person.GetType().GetProperty("Name");
+			KeyReflection<Person> keyPerson = new KeyReflection<Person>();
 
-			property.SetValue(person, "John");
 
+			keyPerson["name"] = "John";
+			keyPerson["age"] = 18;
+
+			KeyReflection<Address> keyAddress = new KeyReflection<Address>();
+			
+			keyAddress["street"] = "Red";
+			keyAddress["city"] = "Moscow";
+			
+			keyPerson["address"] = keyAddress.Value;
+
+
+			Person person = keyPerson.Value;
 
 			Console.WriteLine(person.Name);
+			Console.WriteLine(person.Age);
+			Console.WriteLine(person.Address.City);
+			Console.WriteLine(person.Address.Street);
 
 
-			var keyValueRow = (KeyValueRow)cascade[0];
 
-			string key = new Peeker(yaml, keyValueRow.Key).ToString();
-
-			Console.WriteLine($"key: {key}");
+			int a = (int)Activator.CreateInstance(typeof(int));
 
 
-			Parser parser = new Parser(YamlText);
-
-			parser.Deserialize();
 		}
 	}
 }
