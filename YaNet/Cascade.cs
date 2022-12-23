@@ -13,6 +13,8 @@ namespace YaNet
 
 		private Row[] _rows;
 
+		public Row[] Rows => _rows;
+
 		private StringBuilder _buffer;
 		private int _current;
 		private Mark _mark;

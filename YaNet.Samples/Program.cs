@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using YaNet;
 using YaNet.Features;
 using System.Reflection;
@@ -16,29 +16,82 @@ namespace YaNet.Samples
 		public const char TabIndent = '\t';
 	}
 
+
+
 	public static class Types
 	{
+		public delegate object Quilify(string value);
+
 		public static Dictionary<string, Type> KeyValueType = new ()
 		{
-            { "byte", typeof(byte) }, 
-            { "sbyte", typeof(sbyte) },
-            { "short", typeof(short) }, 
-            { "ushort", typeof(ushort) },
-            { "int", typeof(int) }, 
-            { "uint", typeof(uint) },
-            { "long", typeof(long) }, 
-            { "ulong", typeof(ulong) },
-            { "float", typeof(float) },
-            { "double", typeof(double) },
-            { "decimal", typeof(decimal) },
-            { "string", typeof(string) },
-            { "char", typeof(char) },
-            { "uint", typeof(uint) },
-            { "bool", typeof(bool) },
+      { "short", typeof(short) }, 
+      { "ushort", typeof(ushort) },
+      { "byte", typeof(byte) }, 
+      { "sbyte", typeof(sbyte) },
+      { "int", typeof(int) }, 
+      { "uint", typeof(uint) },
+      { "long", typeof(long) }, 
+      { "ulong", typeof(ulong) },
+      { "float", typeof(float) },
+      { "double", typeof(double) },
+      { "decimal", typeof(decimal) },
+      { "string", typeof(string) },
+      { "char", typeof(char) },
+      { "bool", typeof(bool) },
+
+      { "Int16", typeof(short) }, 
+      { "UInt16", typeof(ushort) },
+      { "Byte", typeof(byte) }, 
+      { "SByte", typeof(sbyte) },
+      { "Int32", typeof(int) }, 
+      { "UInt32", typeof(uint) },
+      { "Int64", typeof(long) }, 
+      { "UInt64", typeof(ulong) },
+      { "Single", typeof(float) },
+      { "Double", typeof(double) },
+      { "Decimal", typeof(decimal) },
+      { "String", typeof(string) },
+      { "Char", typeof(char) },
+      { "Boolean", typeof(bool) },
 		};
 
+		public static object Converter(Type type, string value)
+			=> type.Name switch 
+				{
+					"Int16" => (object)Convert.ToInt16(value),
+					"UInt16" => (object)Convert.ToUInt16(value),
+					"Byte" => (object)Convert.ToByte(value),
+					"SByte" => (object)Convert.ToSByte(value),
+					"Int32" => (object)Convert.ToInt32(value),
+					"UInt32" => (object)Convert.ToUInt32(value),
+					"Int64" => (object)Convert.ToInt64(value),
+					"UInt64" => (object)Convert.ToUInt64(value),
+					"Single" => (object)Convert.ToSingle(value),
+					"Double" => (object)Convert.ToDouble(value),
+					"Decimal" => (object)Convert.ToDecimal(value),
+					"Boolean" => (object)Convert.ToBoolean(value),
+					"Char" => (object)Convert.ToChar(value),
+					"String" => (object)value,
+					_ => Activator.CreateInstance(type)
+				};
 
-
+		public static Dictionary<string, Quilify> Converters = new ()
+		{
+			{ "Int16", value => (object)Convert.ToInt16(value) },
+			{ "UInt16", value => (object)Convert.ToUInt16(value) },
+			{ "Byte", value => (object)Convert.ToByte(value) },
+			{ "SByte", value => (object)Convert.ToSByte(value) },
+			{ "Int32", value => (object)Convert.ToInt32(value) },
+			{ "UInt32", value => (object)Convert.ToUInt32(value) },
+			{ "Int64", value => (object)Convert.ToInt64(value) },
+			{ "UInt64", value => (object)Convert.ToUInt64(value) },
+			{ "Single", value => (object)Convert.ToSingle(value) },
+			{ "Double", value => (object)Convert.ToDouble(value) },
+			{ "Decimal", value => (object)Convert.ToDecimal(value) },
+			{ "Boolean", value => (object)Convert.ToBoolean(value) },
+			{ "Char", value => (object)Convert.ToChar(value) },
+			{ "String", value => (object)value },
+		};
 	}
 
 	public enum RowBreak
@@ -109,90 +162,59 @@ namespace YaNet.Samples
 		};
 	}
 
-	public class Person
+
+	public interface IType
 	{
-		public string Name { get; set; }
-		public int Age { get; set; }
-	
-		public Address Address { get; set; }
+		public void Init();
 	}
 
-	public class Address
+	public class Scalar : IType
 	{
-		public string City { get; set; }
-		public string Street { get; set; }
-	}
+		private KeyValueRow _keyValueRow;
+		private Marker _marker;
+		private PropertyInfo _propertyInfo;
+		private object _obj;
 
-	public class KeyReflection<T> where T : new()
-	{
-		private Dictionary<string, PropertyInfo> _properties;
-
-		public Dictionary<string, PropertyInfo> Properties => _properties;
-
-		private T _value;
-
-		public T Value => _value;
-
-		public KeyReflection() : this(new T()) { }
-
-		public KeyReflection(T obj)
+		private List<string> _scalarTypes = new()
 		{
-			_value = obj == null ? default : obj;
+			"Int16",
+			"UInt16",
+			"Byte",
+			"SByte",
+			"Int32",
+			"UInt32",
+			"Int64",
+			"UInt64",
+			"Single",
+			"Double",
+			"Decimal",
+			"Boolean",
+			"Char",
+			"String",
+		};
 
-			PropertyInfo[] properties = obj.GetType().GetProperties();
+		public Scalar(StringBuilder buffer, Row row, object obj)
+		{
+			_keyValueRow = row as KeyValueRow;
+
+			_obj = obj;
+
+			_marker = new Marker(buffer);
 			
-			_properties = new Dictionary<string, PropertyInfo>();
+			string propertyName = _marker.Buffer(_keyValueRow.Key);
 
-			for (int i = 0; i < properties.Length; i++)
-			{
-				_properties.Add(properties[i].Name.ToLower(), properties[i]);
-			}
+			_propertyInfo = _obj.GetType().GetProperty(propertyName);
 		}
 
-		public object this[string prop]
+		public void Init()
 		{
-			get
-			{
-				return _properties[prop].GetValue(_value);
-			}
-			set
-			{
-				_properties[prop].SetValue(_value, value);
-			}
+			string substring = _marker.Buffer(_keyValueRow.Value);
+
+			object value = Types.Converter(_propertyInfo.PropertyType, substring);
+
+			_propertyInfo.SetValue(_obj, value);
 		}
 	}
-
-	// public class InitReflection<T> where T : new()
-	// {
-	// 	private KeyReflection<T> _keyReflection;
-
-	// 	private Row[] _rows;
-
-	// 	private T _value;
-
-	// 	public T Value => _value;
-
-	// 	public InitReflection(Row[] rows)
-	// 	{
-	// 		_keyReflection = new KeyReflection<T>();
-			
-	// 		_value = _keyReflection.Value;
-
-	// 		_rows = rows;
-
-	// 		foreach (var prop in _keyReflection.Properties)
-	// 		{
-	// 			if (prop.TypeName == typeof(int))
-	// 			{
-	// 				KeyValueRow kvr = row as KeyValueRow;
-
-	// 				prop[new Peeker(_buffer, kvr.Key)].SetValue(new Peeker(_buffer, kvr.Value));
-	// 			}
-
-	// 		}
-
-	// 	}
-	// }
 
 	public class Program
 	{
@@ -202,30 +224,21 @@ namespace YaNet.Samples
 
 		public static string[] YamlRows => File.ReadAllLines(CurrentDirectory);
 
-		public static T CreateInstance<T>(T value)
+		public static T CreateInstance<T>(Type type)
+			=> (T)Activator.CreateInstance(type);
+		
+		public class Person
 		{
-			return (T)value;
+			public string Name { get; set; }
+			public int Age { get; set; }
+		
+			public Address Address { get; set; }
 		}
 
-		public void foo()
+		public class Address
 		{
-
-
-			if (_keyReflection["age"].Name == typeof(int))
-			{
-				_keyReflection["age"] = (int)CreateInstance<int>(18);
-			}
-			
-			if (_keyReflection["age"].Name == typeof(double))
-			{
-				_keyReflection["age"] = (double)CreateInstance<double>(3.14);
-			}
-
-			if (_keyReflection["age"].Name == typeof(string))
-			{
-				_keyReflection["age"] = (string)CreateInstance<string>("18");
-			}
-
+			public string City { get; set; }
+			public string Street { get; set; }
 		}
 
 		public static void Main()
@@ -234,46 +247,125 @@ namespace YaNet.Samples
 
 			yaml = "person:\n\tpersonal data:\n\t\tfirstName: Bob\n\t\tmiddleName: John\n\t\tsecondName: Patick\n\t\tage: 18\n\t\tsex: male\n\taddress:\n\t\tcity: Moscow\n\t\tstreet: Red\n\t\thome: 3\n\tvisitCountries:\n\t\t- Russia\n\t\t- China\n\t\t- USA\n\tfriends:\n\t\t- id: 23\n\t\t  firstName: Albert\n\t\t  middleName: Allen\n\t\t  secondName: Bert\n\t\t- id: 56\n\t\t  firstName: Patrick\n\t\t  middleName: Cecil\n\t\t  secondName: Clarence\n\t\t- id: 87\n\t\t  firstName: Bob\n\t\t  middleName: Elliot\n\t\t  secondName: Elmer\n\t\t- id: 101\n\t\t  firstName: Ernie\n\t\t  middleName: Eugene\n\t\t  secondName: Fergus\n\tlanguages:\n\t\t- English\n\t\t- Russain\n\t\t- Japanese\n\t\t- Spanish\nip address:\n\tip: \"192.168.0.1\"\n\tport: 8080\n\tprotocol:\n\t\ttcp: true\n\t\tudp: true";
 			
-			yaml = "name: John\nage: 18\naddress:\n\tcity: Moscow\n\tstreet: Red";
+			yaml = "Name: Goncharov\nAge: 18\nAddress:\n\tCity: Moscow\n\tStreet: Red";
 
 			Cascade cascade = new Cascade(yaml);
 
 			cascade.Analize();
 			//cascade.Info();
 
+			Row[] rows = cascade.Rows;
 
-			KeyValueRow kvr = cascade[0] as KeyValueRow;
+			// 0[0]KeyValueRow: 'name' : 'Goncharov'
+			// 1[0]KeyValueRow: 'age' : '18'
+			// 2[0]KeyRow: 'address':
+			// 3[1]KeyValueRow: 'city' : 'Moscow'
+			// 4[1]KeyValueRow: 'street' : 'Red'
 
-			Console.WriteLine("key: " + new Peeker(yaml, kvr.Key));
+			// 0[0] row: [0:15:16] type: KeyValueRow key: [0:3:4] value: [6:14:9]
+			// 1[0] row: [16:23:8] type: KeyValueRow key: [16:18:3] value: [21:22:2]
+			// 2[0] row: [24:32:9] type: KeyRow key: [24:30:7]
+			// 3[1] row: [33:46:14] type: KeyValueRow key: [34:37:4] value: [40:45:6]
+			// 4[1] row: [47:58:12] type: KeyValueRow key: [48:53:6] value: [56:58:3]
 
-			Console.WriteLine("value: " + new Peeker(yaml, kvr.Value));
-
-
-			KeyReflection<Person> keyPerson = new KeyReflection<Person>();
-
-
-			keyPerson["name"] = "John";
-			keyPerson["age"] = 18;
-
-			KeyReflection<Address> keyAddress = new KeyReflection<Address>();
+			for (int i = 0; i < rows.Length; i++)
+			{
+				rows[i].Info();
+			}
 			
-			keyAddress["street"] = "Red";
-			keyAddress["city"] = "Moscow";
+			StringBuilder buffer = new StringBuilder(yaml);
+
+
+			Dictionary<string, PropertyInfo> properties = typeof(Person)
+				.GetProperties()
+				.ToDictionary(prop => prop.Name, prop => prop);
+
+			foreach (var k in properties.Keys)
+			{
+				Console.WriteLine($"{k} {properties[k].PropertyType.Name}");
+			}
+
 			
-			keyPerson["address"] = keyAddress.Value;
+
+			#region Init
+
+			Person person = new Person();
+
+			string key = String.Empty;
+			object value;
+
+			Marker marker = new Marker(yaml);
+
+			#endregion Init
 
 
-			Person person = keyPerson.Value;
 
-			Console.WriteLine(person.Name);
-			Console.WriteLine(person.Age);
-			Console.WriteLine(person.Address.City);
-			Console.WriteLine(person.Address.Street);
+			// scalar key value type
 
+			Scalar scalarName = new Scalar(buffer, rows[0], person);
+			scalarName.Init();
 
 
-			int a = (int)Activator.CreateInstance(typeof(int));
+			// scalar key value type with convert
 
+			Scalar scalaAge = new Scalar(buffer, rows[1], person);
+			scalarName.Init();
+
+
+			// object type
+
+			key = marker.Buffer((rows[2] as KeyRow).Key);
+
+			value = Types.Converter(properties[key].PropertyType, "${Person.Address}");
+
+			// init object in object
+
+			object address = value;
+
+			properties[key].SetValue(person, value);
+
+			Dictionary<string, PropertyInfo> addressProperties = address
+				.GetType()
+				.GetProperties()
+				.ToDictionary(prop => prop.Name, prop => prop);
+
+
+
+			// scalar key value type
+
+			KeyValueRow rowCity = rows[3] as KeyValueRow;
+
+			key = marker.Buffer(rowCity.Key);
+
+			string city = marker.Buffer(rowCity.Value);
+
+			value = Types.Converter(addressProperties[key].PropertyType, city);
+
+			addressProperties[key].SetValue(address, value);
+
+
+			
+			// scalar key value type
+
+			KeyValueRow rowStreet = rows[4] as KeyValueRow;
+
+			key = marker.Buffer(rowStreet.Key);
+
+			string street = marker.Buffer(rowStreet.Value);
+
+			value = Types.Converter(addressProperties[key].PropertyType, street);
+
+			addressProperties[key].SetValue(address, value);
+
+
+
+
+			Console.WriteLine($"person:");
+			Console.WriteLine($"person.Name: {person.Name}");
+			Console.WriteLine($"person.Age: {person.Age}");
+			Console.WriteLine($"person.Address:");
+			Console.WriteLine($"person.City: {person.Address.City}");
+			Console.WriteLine($"person.Street: {person.Address.Street}");
 
 		}
 	}

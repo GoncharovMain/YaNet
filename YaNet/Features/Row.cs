@@ -3,11 +3,22 @@ using YaNet;
 
 namespace YaNet.Features
 {
+	public enum Structures
+	{
+		Scalar = 1,
+		List,
+		Dictionary,
+		Object,
+		Unknown
+	}
+
 	public class Row
 	{
 		protected Mark _row;
 
 		protected int _indent;
+
+		public Structures Structure = Structures.Unknown;
 
 		public Dictionary<int, Row> References { get; private set; }
 
