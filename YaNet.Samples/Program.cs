@@ -177,20 +177,13 @@ namespace YaNet.Samples
 
 		private List<string> _scalarTypes = new()
 		{
-			"Int16",
-			"UInt16",
-			"Byte",
-			"SByte",
-			"Int32",
-			"UInt32",
-			"Int64",
-			"UInt64",
-			"Single",
-			"Double",
-			"Decimal",
+			"Int16", "UInt16",
+			"Byte", "SByte",
+			"Int32", "UInt32",
+			"Int64", "UInt64",
+			"Single", "Double", "Decimal",
 			"Boolean",
-			"Char",
-			"String",
+			"Char", "String",
 		};
 
 		public Scalar(StringBuilder buffer, Row row, object obj)
@@ -213,6 +206,33 @@ namespace YaNet.Samples
 			object value = Types.Converter(_propertyInfo.PropertyType, substring);
 
 			_propertyInfo.SetValue(_obj, value);
+		}
+	}
+
+	public class ObjectType : IType
+	{
+		private KeyRow _keyRow;
+		private Marker _marker;
+		private PropertyInfo _propertyInfo;
+		private object _obj;
+
+		public ObjectType(StringBuilder buffer, Row row, object obj)
+		{
+			_keyRow = row as KeyRow;
+
+			_marker = new Marker(buffer);
+
+			_obj = obj;
+
+			string propertyName = _marker.Buffer(_keyRow.Key);
+
+			_propertyInfo = _obj.GetType().GetProperty(propertyName);
+
+		}
+
+		public void Init()
+		{
+
 		}
 	}
 
@@ -247,7 +267,7 @@ namespace YaNet.Samples
 
 			yaml = "person:\n\tpersonal data:\n\t\tfirstName: Bob\n\t\tmiddleName: John\n\t\tsecondName: Patick\n\t\tage: 18\n\t\tsex: male\n\taddress:\n\t\tcity: Moscow\n\t\tstreet: Red\n\t\thome: 3\n\tvisitCountries:\n\t\t- Russia\n\t\t- China\n\t\t- USA\n\tfriends:\n\t\t- id: 23\n\t\t  firstName: Albert\n\t\t  middleName: Allen\n\t\t  secondName: Bert\n\t\t- id: 56\n\t\t  firstName: Patrick\n\t\t  middleName: Cecil\n\t\t  secondName: Clarence\n\t\t- id: 87\n\t\t  firstName: Bob\n\t\t  middleName: Elliot\n\t\t  secondName: Elmer\n\t\t- id: 101\n\t\t  firstName: Ernie\n\t\t  middleName: Eugene\n\t\t  secondName: Fergus\n\tlanguages:\n\t\t- English\n\t\t- Russain\n\t\t- Japanese\n\t\t- Spanish\nip address:\n\tip: \"192.168.0.1\"\n\tport: 8080\n\tprotocol:\n\t\ttcp: true\n\t\tudp: true";
 			
-			yaml = "Name: Goncharov\nAge: 18\nAddress:\n\tCity: Moscow\n\tStreet: Red";
+			yaml = "Name: Goncharov\nAge: 18\nAddress:\n\tCity: London\n\tStreet: Red";
 
 			Cascade cascade = new Cascade(yaml);
 
@@ -308,11 +328,14 @@ namespace YaNet.Samples
 
 			// scalar key value type with convert
 
-			Scalar scalaAge = new Scalar(buffer, rows[1], person);
-			scalarName.Init();
+			Scalar scalarAge = new Scalar(buffer, rows[1], person);
+			scalarAge.Init();
 
 
 			// object type
+			ObjectType objectAddress = new ObjectType(buffer, rows[2], person);
+
+
 
 			key = marker.Buffer((rows[2] as KeyRow).Key);
 
@@ -333,39 +356,25 @@ namespace YaNet.Samples
 
 			// scalar key value type
 
-			KeyValueRow rowCity = rows[3] as KeyValueRow;
+			Scalar scalarCity = new Scalar(buffer, rows[3], address);
 
-			key = marker.Buffer(rowCity.Key);
-
-			string city = marker.Buffer(rowCity.Value);
-
-			value = Types.Converter(addressProperties[key].PropertyType, city);
-
-			addressProperties[key].SetValue(address, value);
+			scalarCity.Init();
 
 
-			
 			// scalar key value type
 
-			KeyValueRow rowStreet = rows[4] as KeyValueRow;
+			Scalar scalarStreet = new Scalar(buffer, rows[4], address);
 
-			key = marker.Buffer(rowStreet.Key);
+			scalarStreet.Init();
 
-			string street = marker.Buffer(rowStreet.Value);
-
-			value = Types.Converter(addressProperties[key].PropertyType, street);
-
-			addressProperties[key].SetValue(address, value);
-
-
-
+			
 
 			Console.WriteLine($"person:");
-			Console.WriteLine($"person.Name: {person.Name}");
-			Console.WriteLine($"person.Age: {person.Age}");
-			Console.WriteLine($"person.Address:");
-			Console.WriteLine($"person.City: {person.Address.City}");
-			Console.WriteLine($"person.Street: {person.Address.Street}");
+			Console.WriteLine($"\tName: {person.Name}");
+			Console.WriteLine($"\tAge: {person.Age}");
+			Console.WriteLine($"\tAddress:");
+			Console.WriteLine($"\t\tCity: {person.Address.City}");
+			Console.WriteLine($"\t\tStreet: {person.Address.Street}");
 
 		}
 	}
