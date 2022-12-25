@@ -163,17 +163,25 @@ namespace YaNet.Samples
 	}
 
 
-	public interface IType
+
+	public abstract class Structure
 	{
-		public void Init();
+		protected Marker _marker;
+		protected PropertyInfo _propertyInfo;
+		protected object _obj;
+
+		protected Structure(Marker marker, object obj)
+		{
+			_marker = marker;
+			_obj = obj;
+		}
+
+		public abstract void Init();
 	}
 
-	public class Scalar : IType
+	public class Scalar : Structure
 	{
 		private KeyValueRow _keyValueRow;
-		private Marker _marker;
-		private PropertyInfo _propertyInfo;
-		private object _obj;
 
 		private List<string> _scalarTypes = new()
 		{
@@ -186,20 +194,17 @@ namespace YaNet.Samples
 			"Char", "String",
 		};
 
-		public Scalar(StringBuilder buffer, Row row, object obj)
+		public Scalar(StringBuilder buffer, Row row, object obj) 
+			: base(new Marker(buffer), obj)
 		{
 			_keyValueRow = row as KeyValueRow;
-
-			_obj = obj;
-
-			_marker = new Marker(buffer);
 			
 			string propertyName = _marker.Buffer(_keyValueRow.Key);
 
 			_propertyInfo = _obj.GetType().GetProperty(propertyName);
 		}
 
-		public void Init()
+		public override void Init()
 		{
 			string substring = _marker.Buffer(_keyValueRow.Value);
 
@@ -209,30 +214,35 @@ namespace YaNet.Samples
 		}
 	}
 
-	public class ObjectType : IType
+	public class ObjectType : Structure
 	{
 		private KeyRow _keyRow;
-		private Marker _marker;
-		private PropertyInfo _propertyInfo;
-		private object _obj;
+
+		private object _instance;
+
+		public object Instance => _instance;
 
 		public ObjectType(StringBuilder buffer, Row row, object obj)
+			: base(new Marker(buffer), obj)
 		{
 			_keyRow = row as KeyRow;
-
-			_marker = new Marker(buffer);
-
-			_obj = obj;
 
 			string propertyName = _marker.Buffer(_keyRow.Key);
 
 			_propertyInfo = _obj.GetType().GetProperty(propertyName);
-
 		}
 
-		public void Init()
+		public override void Init()
 		{
+			string key = _marker.Buffer(_keyRow.Key);
 
+			object value = Types.Converter(_propertyInfo.PropertyType, "${Person.Address}");
+
+			// init object in object
+
+			_instance = value;
+
+			_propertyInfo.SetValue(_obj, value);
 		}
 	}
 
@@ -322,37 +332,20 @@ namespace YaNet.Samples
 
 			// scalar key value type
 
-			Scalar scalarName = new Scalar(buffer, rows[0], person);
-			scalarName.Init();
-
+			new Scalar(buffer, rows[0], person).Init();
+			
 
 			// scalar key value type with convert
 
-			Scalar scalarAge = new Scalar(buffer, rows[1], person);
-			scalarAge.Init();
-
+			new Scalar(buffer, rows[1], person).Init();
+			
 
 			// object type
-			ObjectType objectAddress = new ObjectType(buffer, rows[2], person);
+			var addressType = new ObjectType(buffer, rows[2], person);
 
+			addressType.Init();
 
-
-			key = marker.Buffer((rows[2] as KeyRow).Key);
-
-			value = Types.Converter(properties[key].PropertyType, "${Person.Address}");
-
-			// init object in object
-
-			object address = value;
-
-			properties[key].SetValue(person, value);
-
-			Dictionary<string, PropertyInfo> addressProperties = address
-				.GetType()
-				.GetProperties()
-				.ToDictionary(prop => prop.Name, prop => prop);
-
-
+			object address = addressType.Instance;
 
 			// scalar key value type
 
