@@ -7,6 +7,6 @@ namespace YaNet
 		Dictionary,
 		Object,
 
-		NoneRow
+		None
 	}
 }

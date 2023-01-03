@@ -4,6 +4,14 @@ using YaNet.Exceptions;
 
 namespace YaNet
 {
+	public class QualifyType
+	{
+		public QualifyType()
+		{
+			
+		}
+	}
+
 	public class TypeQualifier
 	{
 		private Peeker _peeker;

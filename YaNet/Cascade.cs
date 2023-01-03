@@ -49,7 +49,7 @@ namespace YaNet
 			{
 				currentPosition = FeatureRow(currentPosition);
 
-				currentPosition++;				
+				currentPosition++;
 				_current++;
 			}
 

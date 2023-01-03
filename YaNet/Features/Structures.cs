@@ -6,6 +6,8 @@ namespace YaNet.Features
 		List,
 		Dictionary,
 		Object,
+
+		Empty,
 		Unknown
 	}
 }
