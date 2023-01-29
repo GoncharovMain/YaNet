@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YaNet", "YaNet\YaNet.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YaNet.Test", "YaNet.Test\YaNet.Test.csproj", "{7087079D-CE57-466C-AF74-F0851CDDC9D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YaNet.Samples", "YaNet.Samples\YaNet.Samples.csproj", "{0E27521E-BF8D-4E3E-86D4-334573D74379}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{7087079D-CE57-466C-AF74-F0851CDDC9D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7087079D-CE57-466C-AF74-F0851CDDC9D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7087079D-CE57-466C-AF74-F0851CDDC9D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E27521E-BF8D-4E3E-86D4-334573D74379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E27521E-BF8D-4E3E-86D4-334573D74379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E27521E-BF8D-4E3E-86D4-334573D74379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E27521E-BF8D-4E3E-86D4-334573D74379}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

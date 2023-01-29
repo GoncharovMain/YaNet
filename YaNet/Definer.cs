@@ -4,13 +4,11 @@ namespace YaNet
 {
     public class Definer
     {
-        private int _position = 0;
         private StringBuilder _buffer;
         private Mark[] _rows;
         private Marker _marker;
 
-        // cR - currentRow;
-        private int _cR;
+        private int _cR; // cR - currentRow;
         public Definer(StringBuilder buffer, Mark[] rows)
         {
             _buffer = buffer;
@@ -22,7 +20,6 @@ namespace YaNet
         private void Next()
         {
             _cR++;
-            //Console.WriteLine($"get next: {_cR}");
         }
 
         public Collection DefineCollection()
@@ -36,11 +33,7 @@ namespace YaNet
 
             int currentIndent = LevelIndent();
 
-            // Console.WriteLine($"_cR: {_cR} + 1 < {_rows.Length} indent: {currentIndent} added '{_marker.Buffer(_rows[_cR])}' first");
-
             collection.Add(Define());
-
-
 
             while (HasNext())
             {
@@ -52,8 +45,6 @@ namespace YaNet
                 }
 
                 Next();
-
-                // Console.WriteLine($"_cR: {_cR} + 1 < {_rows.Length} indent: {currentIndent} added '{_marker.Buffer(_rows[_cR])}'");
 
                 collection.Add(Define());
             }
@@ -132,12 +123,7 @@ namespace YaNet
                 return new Item(DefineCollection());
             }
 
-            throw new Exception("");
-        }
-
-        private bool IsEmptyOrComment()
-        {
-            return false;
+            throw new Exception($"Has not features on {_cR} row.");
         }
     }
 }

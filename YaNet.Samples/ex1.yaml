@@ -14,22 +14,26 @@ person:
 		- China
 		- USA
 	friends:
-		- id: 23
-		  firstName: Albert
-		  middleName: Allen
-		  secondName: Bert
-		- id: 56
-		  firstName: Patrick
-		  middleName: Cecil
-		  secondName: Clarence
-		- id: 87
-		  firstName: Bob
-		  middleName: Elliot
-		  secondName: Elmer
-		- id: 101
-		  firstName: Ernie
-		  middleName: Eugene
-		  secondName: Fergus
+		-
+			id: 23
+			firstName: Albert
+			middleName: Allen
+			secondName: Bert
+		-
+			id: 56
+			firstName: Patrick
+			middleName: Cecil
+			secondName: Clarence
+		-
+			id: 87
+			firstName: Bob
+			middleName: Elliot
+			secondName: Elmer
+		-
+			id: 101
+			firstName: Ernie
+			middleName: Eugene
+			secondName: Fergus
 	languages:
 		- English
 		- Russain

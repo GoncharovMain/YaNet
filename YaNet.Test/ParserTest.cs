@@ -1,9 +1,25 @@
 ﻿using Xunit;
 using YaNet;
+using YaNet.Nodes;
 using Xunit.Abstractions;
+using System.Text;
 
 namespace YaNet.Test
 {
+    public class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public Address Address { get; set; }
+    }
+
+    public class Address
+    {
+        public string City { get; set; }
+        public string Street { get; set; }
+        public int Home { get; set; }
+    }
+
     public class PeekerTest
     {
         private readonly ITestOutputHelper _testOutputHelper;
@@ -197,6 +213,39 @@ namespace YaNet.Test
 
             Assert.False(new Peeker("person: John").Contains("hnS"));
             Assert.False(new Peeker("person: John").Contains("Joht"));
+        }
+
+        [Fact]
+        public void DefinerPermutation()
+        {
+            string[] yamls =
+            {
+                "Name: Goncharov\nAge: 18\nAddress:\n\tCity: London\n\tStreet: Red\n\tHome: 3",
+                "Age: 18\nAddress:\n\tCity: London\n\tStreet: Red\n\tHome: 3\nName: Goncharov",
+                "Address:\n\tCity: London\n\tStreet: Red\n\tHome: 3\nName: Goncharov\nAge: 18",
+                "Address:\n\tCity: London\n\tStreet: Red\n\tHome: 3\nAge: 18\nName: Goncharov",
+                "Address:\n\tStreet: Red\n\tCity: London\n\tHome: 3\nAge: 18\nName: Goncharov",
+            };
+
+
+
+            for (int i = 0; i < yamls.Length; i++)
+            {
+                Deserializer deserializer = new Deserializer(yamls[i]);
+
+                Person person = deserializer.Deserialize<Person>();
+
+                Assert.NotNull(person);
+
+                Assert.Equal("Goncharov", person.Name);
+                Assert.Equal(18, person.Age);
+
+                Assert.Equal("London", person.Address.City);
+                Assert.Equal("Red", person.Address.Street);
+                Assert.Equal(3, person.Address.Home);
+            }
+
+
         }
     }
 }

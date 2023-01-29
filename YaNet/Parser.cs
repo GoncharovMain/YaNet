@@ -4,21 +4,32 @@ using YaNet.Exceptions;
 
 namespace YaNet
 {
-	public class Parser
-	{
-		private StringBuilder _buffer;
+    public class Parser
+    {
+        private StringBuilder _buffer;
+        private Marker _marker;
 
-		public Parser(StringBuilder text)
-		{
-			_buffer = text;
-		}
+        public Parser(StringBuilder buffer)
+        {
+            _buffer = buffer;
+            _marker = new Marker(_buffer);
+        }
 
-		public Parser(string text) : this(new StringBuilder(text)) { }
+        public object Parse(object obj)
+        {
+            Mark[] rows = new Peeker(_buffer).Split('\n');
 
 
-		public void Deserialize()
-		{
-			
-		}
-	}
+            Definer definer = new Definer(_buffer, rows);
+
+            Collection collection = definer.DefineCollection();
+
+            collection.Print(_buffer);
+
+            foreach (INode node in collection.Nodes)
+                node.Init(obj, _buffer);
+
+            return obj;
+        }
+    }
 }
