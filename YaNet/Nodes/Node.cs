@@ -6,6 +6,7 @@ namespace YaNet.Nodes
     public interface INode
     {
         void Init(object obj, StringBuilder buffer);
+        void Print(StringBuilder buffer);
     }
 
 
@@ -24,6 +25,13 @@ namespace YaNet.Nodes
         public void Init(object obj, StringBuilder buffer)
         {
             throw new NotImplementedException();
+        }
+
+        public void Print(StringBuilder buffer)
+        {
+            Marker marker = new Marker(buffer);
+
+            Console.WriteLine($"- '{marker.Buffer(Value)}'");
         }
     }
 
@@ -45,11 +53,25 @@ namespace YaNet.Nodes
             string key = marker.Buffer(Key);
             string value = marker.Buffer(Value);
 
-            //Console.WriteLine($"Key: {key} value: {value}");
 
             PropertyInfo property = obj.GetType().GetProperty(key);
 
+            Console.Write($"Key: {key} ");
+            Console.Write($"value: {value} ");
+            Console.Write($"type: {obj.GetType().Name} ");
+            Console.WriteLine($"propType: {property.PropertyType}");
+
+
+            //Console.WriteLine($"Key: {key} value: {value} type: {obj.GetType().Name} propType: {property.PropertyType}");
+
             property.SetValue(obj, Conv.Converter(property.PropertyType, value));
+        }
+
+        public void Print(StringBuilder buffer)
+        {
+            Marker marker = new Marker(buffer);
+
+            Console.WriteLine($"'{marker.Buffer(Key)}' : '{marker.Buffer(Value)}'");
         }
     }
 
@@ -65,32 +87,48 @@ namespace YaNet.Nodes
         {
             throw new NotImplementedException();
         }
+
+        public void Print(StringBuilder buffer)
+        {
+            Node.Print(buffer);
+        }
     }
 
     public class Collection : INode
     {
         public INode[] Nodes { get; set; }
-        public Collection(INode[] nodes)
+
+        public Collection(params INode[] nodes)
         {
             Nodes = nodes;
         }
         public void Init(object obj, StringBuilder buffer)
         {
+            Console.WriteLine($"objType: {obj.GetType().Name} count nodes: {Nodes.Length}");
+
             for (int i = 0; i < Nodes.Length; i++)
             {
                 Nodes[i].Init(obj, buffer);
+            }
+        }
+
+        public void Print(StringBuilder buffer)
+        {
+            for (int i = 0; i < Nodes.Length; i++)
+            {
+                Nodes[i].Print(buffer);
             }
         }
     }
     public class Node : INode
     {
         public Mark Key { get; set; }
-        public Collection Collection { get; set; }
+        public INode Nodes { get; set; }
 
-        public Node(Mark key, INode[] nodes)
+        public Node(Mark key, INode nodes)
         {
             Key = key;
-            Collection = new Collection(nodes);
+            Nodes = nodes;
         }
         public void Init(object obj, StringBuilder buffer)
         {
@@ -105,14 +143,23 @@ namespace YaNet.Nodes
 
             property.SetValue(obj, inner);
 
-            Collection.Init(inner, buffer);
+            Nodes.Init(inner, buffer);
+        }
+
+        public virtual void Print(StringBuilder buffer)
+        {
+            Marker marker = new Marker(buffer);
+
+            Console.WriteLine($"'{marker.Buffer(Key)}':");
+
+            Nodes.Print(buffer);
         }
     }
     public class NodeReference : Node
     {
         public Mark Reference { get; set; }
 
-        public NodeReference(Mark Key, Mark reference, INode[] nodes)
+        public NodeReference(Mark Key, Mark reference, INode nodes)
             : base(Key, nodes)
         {
             Reference = reference;
@@ -121,6 +168,18 @@ namespace YaNet.Nodes
         public new void Init(object obj, StringBuilder buffer)
         {
             throw new NotImplementedException();
+        }
+
+        public static explicit operator NodeReference(Pair pair)
+            => new NodeReference(pair.Key, pair.Value, null);
+
+        public override void Print(StringBuilder buffer)
+        {
+            Marker marker = new Marker(buffer);
+
+            Console.WriteLine($"'{marker.Buffer(Key)}' : '{marker.Buffer(Reference)}'");
+
+            Nodes.Print(buffer);
         }
     }
 

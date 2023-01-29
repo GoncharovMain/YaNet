@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Doc.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1>Documentation</h1>
+<p><strong>Features:</strong></p>
+<p>The Clanguage has static typing, and the data types in the <code>yanet</code> configuration file will depend on the data types of the object's properties.</p>
+<pre class="hljs"><code><div>person:
+  name: John
+  age: 18
+</div></code></pre>
+<p>First case value 18 will be convert to <b>string</b> type.</p>
+<pre class="hljs"><code><div>class Person
+{
+  public string Name { get; set; }
+  public string Age { get; set; }
+}
+</div></code></pre>
+<p>Second case value 18 will be convert to <b>int</b> type</p>
+<pre class="hljs"><code><div>class Person
+{
+ public string Name { get; set; }
+ public int Age { get; set; }
+}
+</div></code></pre>
+<p>в отличии от формата yanet, в json тип определяется явно через, например,
+двойные ковычки:
+&quot;18&quot; является типом string
+18 является числовым типом</p>
+<p>Хотя в yanet существует явное выделение значения двойными ковычками</p>
+<pre class="hljs"><code><div>person:
+  name: &quot;John&quot;
+  age: &quot;18&quot;
+</div></code></pre>
+<p>и при попытке преобразовать в тип int, YaNet выдаст исключение</p>
+<p><em>Чем отличается синтаксис тегов от нового синтаксиса ссылок?</em></p>
+<p>Вместо объявления новой переменной можно использовать каскад ссылок,
+например: <code>requests.google.search.response.expectedField</code>. Всё заключается между
+двумя последовательностями знаков: '${' и '}'</p>
+<p>Время инициализации ссылок</p>
+<p>Ссылки заменяют не в момент парсинга, а в момент обращения к ним.
+Ссылка имеет возможность ссылаться на поле, которое ссылается на другое поле</p>
+<pre class="hljs"><code><div>text: scalar
+
+expectedField: ${text}
+
+result: ${expectedField}
+</div></code></pre>
+<p>Если всё же хочется определить переменную, то просто добавьте поле
+и задайте ей значение. Возможен случай, когда значение поля надо брать не из
+области видимости текущей разметки, а из другого файла, тогда можно импортировать
+файл указав словарь import.</p>
+<p>Импорт файлов</p>
+<p>Поле import зарезервировано и используется в самом начале. Создаётся словарь
+в формате &lt;название_объекта&gt;:&lt;путь_к_файлу&gt;, где ключ это строка, а объект это весь документ.</p>
+<pre class="hljs"><code><div>google.yaml file
+
+request:
+  header:
+  cookie: 9ghfd93fh
+
+yandex.yaml
+
+request:
+  header:
+  cookie: 3h4j4298f
+
+request.yaml
+
+import:
+  google: folder1/folder/google.yaml
+  yandex: folder1/folder/yandex.yaml
+
+cookies:
+  - ${google.request.header.cookie}
+  - ${yandex.request.header.cookie}
+</div></code></pre>
+<p>result: cookies =&gt; { &quot;9ghfd93fh&quot;, &quot;3h4j4298f&quot; }</p>
+<p>with indent 2 spaces</p>
+<pre class="hljs"><code><div>LF
+list:/n  - item1/n  - item2/n  - item3/n  - itemN/n
+
+CR
+list:/r  - item1/r  - item2/r  - item3/r  - itemN/r
+
+EOL
+list:/r/n  - item1/r/n  - item2/r/n  - item3/r/n  - itemN/r/n
+</div></code></pre>
+<p>with tab</p>
+<pre class="hljs"><code><div>LF
+list:/n/t- item1/n/t- item2/n/t- item3/n/t- itemN/n
+
+CR
+list:/r/t- item1/r/t- item2/r/t- item3/r/t- itemN/r
+
+EOL
+list:/r/n/t- item1/r/n/t- item2/r/n/t- item3/r/n/t- itemN/r/n
+</div></code></pre>
+<p>Почему стоит добавить новый синтаксис ссылок?</p>
+<pre class="hljs"><code><div>person:
+  name: John
+  age: 18
+</div></code></pre>
+<p>YaNet version 1.0:</p>
+<ul>
+<li>simple reference</li>
+</ul>
+<p>YaNet version 2.0</p>
+<ul>
+<li>Settings:</li>
+<li>using '\t' or double space ' '</li>
+<li>replace delimiter ':' on &quot;=&gt;&quot;</li>
+</ul>
+<h2 id="yanet-version-30">YaNet version 3.0</h2>
+<p>T =&gt; scalar, list, dictionary, object</p>
+<p>tag: <scalar></p>
+<ul>
+<li>значит, что ссылок может быть сколько угодно и в любом месте
+ссылки внутри других ссылок не поддерживаются</li>
+</ul>
+<pre class="hljs"><code><div>text: name
+baz: bar
+bar: baz
+  name: hello
+foo: ${baz.{text}}
+</div></code></pre>
+<p>или</p>
+<pre class="hljs"><code><div>foo: ${baz.${text}}
+ожидается =&gt; ${bar.name} =&gt; hello
+</div></code></pre>
+<p>но это не работает.</p>
+<pre class="hljs"><code><div>text: scalar [${ref}*]
+text: 'scalar'
+text: &quot;scalar&quot;
+</div></code></pre>
+<pre class="hljs"><code><div>list: &lt;scalar, T&gt;
+
+list: ${ref}
+  - item1 [${ref}*]
+  - item2 [${ref}*]
+  - item3 [${ref}*]
+  ...
+  - itemN [${ref}*]
+
+dictionary =&gt; (key:&lt;scalar&gt;): (value: &lt;T&gt;)
+</div></code></pre>
+<pre class="hljs"><code><div>dictionary: ${ref}
+  key1: value1 [${ref}*]
+  key2: value2 [${ref}*]
+  key3: value3 [${ref}*]
+  ...
+  keyN: valueN [${ref}*]
+
+{
+  { &quot;key1&quot;, &quot;value1&quot; },
+  { &quot;key2&quot;, &quot;value2&quot; },
+  { &quot;key3&quot;, &quot;value3&quot; },
+  ...
+  { &quot;keyN&quot;, &quot;valueN&quot; },
+}
+
+object:
+  prop1: value1
+  prop2: value2
+  prop3: value3
+  ...
+  propN: valueN
+
+new Object { Prop1 = &quot;value1&quot;, Prop2 = &quot;value2&quot;, Prop3 = &quot;value3&quot;, ..., PropN = &quot;valueN&quot; }
+
+</div></code></pre>
+<h2>Replacement reference</h2>
+<p><strong>scalar to scalar</strong></p>
+<pre class="hljs"><code><div>text: scalar
+foo: ${text}
+
+result: foo =&gt; &quot;scalar&quot;
+</div></code></pre>
+<p><strong>scalar to partial scalar</strong></p>
+<pre class="hljs"><code><div>
+text: scalar
+foo: hello ${text}
+
+result: foo =&gt; &quot;hello scalar&quot;
+</div></code></pre>
+<pre class="hljs"><code><div>name: Bob
+foo: Hello, ${name}. How are you?
+
+result: foo =&gt; &quot;Hello, Bob. How are you?&quot;
+</div></code></pre>
+<p><strong>scalar to partial several scalar</strong></p>
+<pre class="hljs"><code><div>firstName: Bob
+secondName: Ali
+foo: Hello, ${firstName} ${secondName}. How are you?
+
+result: foo =&gt; &quot;Hello Bob Ali. How are you?&quot;
+</div></code></pre>
+<p><strong>Exception recursion</strong></p>
+<pre class="hljs"><code><div>foo: hello, ${bar}
+bar: hello, ${foo}
+
+result: new Exception(&quot;Recursion, foo and bar have reference on yourself&quot;)
+</div></code></pre>
+<p><strong>scalar to one item of list</strong></p>
+<pre class="hljs"><code><div>name: Sara
+names:
+  - John
+  - Sam
+  - Bob
+  - ${name}
+  - Nick
+  - Nelson
+
+result: names =&gt; { John, Sam, Bob, Sara, Nick, Nelson }
+</div></code></pre>
+<p><strong>scalar to several items of list</strong></p>
+<pre class="hljs"><code><div>name: Sara
+name1: Bob
+names:
+  - John
+  - Sam
+  - ${name1}
+  - ${name}
+  - Nick
+  - Nelson
+  - ${name1}
+
+result: names =&gt; { &quot;John&quot;, &quot;Sam&quot;, &quot;Bob&quot;, &quot;Sara&quot;, &quot;Nick&quot;, &quot;Nelson&quot;, &quot;Bob&quot; }
+</div></code></pre>
+<p><strong>get scalar on yourself items</strong></p>
+<pre class="hljs"><code><div>names:
+  - John
+  - Sam
+  - Bob
+  - Sara
+  - Nick
+  - Nelson
+  - ${names[2]}
+
+result: names =&gt; { &quot;John&quot;, &quot;Sam&quot;, &quot;Bob&quot;, &quot;Sara&quot;, &quot;Nick&quot;, &quot;Nelson&quot;, &quot;Bob&quot; }
+</div></code></pre>
+<p><strong>scalar from list to item of list</strong></p>
+<pre class="hljs"><code><div>names1:
+  - John 0
+  - Sam  1
+  - Bob  2
+
+names2:
+  - ${names1[2]}
+  - Nick
+  - Nelson
+
+result: names2 =&gt; { &quot;Bob&quot;, &quot;Nick&quot;, &quot;Nelson&quot; }
+</div></code></pre>
+<p><strong>Override list</strong></p>
+<pre class="hljs"><code><div>names1:
+  - John
+  - Sam
+  - Bob
+names2: ${names1}
+
+result: names2 =&gt; { &quot;John&quot;, &quot;Sam&quot;, &quot;Bob&quot; }
+</div></code></pre>
+<p><strong>Add items to end to list</strong></p>
+<pre class="hljs"><code><div>names1:
+  - John
+  - Sam
+  - Bob
+names2: ${names1}
+  - Sara
+  - Nick
+  - Nelson
+
+result: names =&gt; { &quot;John&quot;, &quot;Sam&quot;, &quot;Bob&quot;, &quot;Sara&quot;, &quot;Nick&quot;, &quot;Nelson&quot;, &quot;Bob&quot; }
+</div></code></pre>
+<p>**Exception: index out of range **</p>
+<pre class="hljs"><code><div>names1:
+  - John 0
+  - Sam  1
+  - Bob  2
+
+names2:
+  - ${names1[3]}
+  - Nick
+  - Nelson
+
+result: new Exception(&quot;Index out of range.&quot;)
+</div></code></pre>
+<p><strong>Exception yourself</strong></p>
+<pre class="hljs"><code><div>names:
+  - ${names[0]}
+  - Sam
+  - Bob
+
+result: new RecursionException(&quot;Index have reference on youself.&quot;)
+</div></code></pre>
+<p><strong>Scalar to item of dictionary</strong></p>
+<pre class="hljs"><code><div>name: Bob
+person:
+  name: ${name}
+  age: 18
+
+result: person =&gt; { { &quot;name&quot;, &quot;Bob&quot; }, { &quot;age&quot;, &quot;18&quot; } }
+
+name: Bob
+age: 18
+person:
+  name: ${name}
+  age: ${age}
+
+result: person =&gt; { { &quot;name&quot;, &quot;Bob&quot; }, { &quot;age&quot;, &quot;18&quot; } }
+</div></code></pre>
+<p><strong>Scalar to composite field</strong></p>
+<pre class="hljs"><code><div>firstName: Bob
+secondName: Ali
+age: 18
+person:
+  fullName: ${firstName} ${secondName}
+  age: ${age}
+
+result: person =&gt; { { &quot;fullName&quot;, &quot;Bob Ali&quot; }, { &quot;age&quot;, &quot;18&quot; } }
+</div></code></pre>
+<p><strong>Scalar from yourself field</strong></p>
+<pre class="hljs"><code><div>person:
+  firstName: Bob
+  secondName: Ali
+  fullName: ${person.firstName} ${person.secondName}
+  age: 18
+
+result: person =&gt; { { &quot;firstName&quot;, &quot;Bob&quot; }, { &quot;secondName&quot;, &quot;Ali&quot; },
+{ &quot;fullName&quot;, &quot;Bob Ali&quot; }, { &quot;age&quot;, &quot;18&quot; } }
+</div></code></pre>
+<h2>Objects</h2>
+<p><strong>Scalar to property of object</strong></p>
+<pre class="hljs"><code><div>name: Bob
+person:
+  name: ${name}
+
+result: person =&gt; Person { Name = &quot;Bob&quot; }
+</div></code></pre>
+<pre class="hljs"><code><div>name: Bob
+age: 18
+person:
+  name: ${name}
+  age: ${age}
+
+result: person =&gt; Person { Name = &quot;Bob&quot;, Age = 18 }
+</div></code></pre>
+<p><strong>Scalar from object property to other object property</strong>
+<em>Types of property Person and Person2 IS NOT equal</em>.</p>
+<pre class="hljs"><code><div>person:
+  name: Bob
+  age: 18
+
+person2:
+  name: ${person.name}
+  age: ${person.age}
+
+result: person2 =&gt; Person2 { Name = &quot;Bob&quot;, Age = 18 }
+</div></code></pre>
+<p><strong>Override full object</strong>
+<em>Types of property Person and Person2 IS equal</em>.</p>
+<pre class="hljs"><code><div>person:
+  name: Bob
+  age: 18
+
+person2: ${person}
+
+result: person2 =&gt; Person { Name = &quot;Bob&quot;, Age = 18 }
+</div></code></pre>
+<p><strong>Override partial object</strong></p>
+<pre class="hljs"><code><div>person:
+  name: Bob
+  age: 18
+
+person2: ${person}
+  age: 20
+
+result: person2 =&gt; Person { Name = &quot;Bob&quot;, Age = 20 }
+</div></code></pre>
+<p><strong>Exception: conflict references</strong></p>
+<p><strong>Delimiters</strong></p>
+<p><strong>delimiter for dictionary</strong></p>
+<pre class="hljs"><code><div>person:
+  name: Bob &quot;: &quot;
+  age: 18   &quot;: &quot;
+</div></code></pre>
+<p><strong>delimiter for object</strong></p>
+<pre class="hljs"><code><div>person:
+  name =&gt; Bob &quot; =&gt; &quot;
+  age =&gt; 18   &quot; =&gt; &quot;
+</div></code></pre>
+<h2>TOKENS</h2>
+<p><strong>Scalar =&gt; string, int, char, double and other type struct</strong></p>
+<pre class="hljs"><code><div>text: Scalar [${ref}*]
+
+
+tokens: { &quot;text&quot;, &quot;scalar&quot; }
+key: text
+value: Scalar
+type: Scalar
+</div></code></pre>
+<pre class="hljs"><code><div>list: ${ref}
+  - Scalar
+  - Scalar
+  - Scalar
+
+tokens: { &quot;list&quot;, &quot;item1&quot;, &quot;item2&quot;, &quot;item3&quot;, ..., &quot;itemN&quot; }
+key: list
+value: { &quot;item1&quot;, &quot;item2&quot;, &quot;item3&quot;, ..., &quot;itemN&quot; }
+type: List&lt;string&gt;
+refOverride: ref
+</div></code></pre>
+<pre class="hljs"><code><div>dictionary: ${ref}
+  key1: Scalar
+  key2: Scalar
+  key3: Scalar
+</div></code></pre>
+<pre class="hljs"><code><div>tokens: { &quot;dictionary&quot;, &quot;key1: value1&quot;, &quot;key2: value2&quot;, &quot;key3: value3&quot;, ..., &quot;keyN: valueN&quot; }
+key: dictionary
+value: { &quot;key1: value1&quot;, &quot;key2: value2&quot;, &quot;key3: value3&quot;, ..., &quot;keyN: valueN&quot; }
+type: Dictionary&lt;string, string&gt;
+refOverride: ref
+</div></code></pre>
+<pre class="hljs"><code><div>object:
+  prop1: value1
+  prop2: value2
+  prop3: value3
+  ...
+  propN: valueN
+</div></code></pre>
+<pre class="hljs"><code><div>string[] tokens = new string[] { &quot;text&quot;, &quot;scalar&quot;}
+int indent = 0;
+Reference[] reference = new Reference[];
+</div></code></pre>
+<pre class="hljs"><code><div>type: list
+refOverride: ref
+token_key: [ key1, key2, key3 ]
+token_value: [ value1, value2, value3 ]
+</div></code></pre>
+<pre class="hljs"><code><div>type: dictionary
+refOverride: ref
+token_key: [ 0, 1, 2 ]
+token_value: [ item1, item2, item3 ]
+</div></code></pre>
+<pre class="hljs"><code><div>token_key: text
+token_value: Hello, ${name}. Are you ${age}?
+type: Scalar
+refs:
+  - ${name}
+  - ${age}
+</div></code></pre>
+<p><strong>start mark</strong></p>
+<p><strong>new syntaxis???</strong></p>
+<pre class="hljs"><code><div>names:
+  1. Bob
+  2. John
+  3. Ali
+
+name: Bob
+</div></code></pre>
+<pre class="hljs"><code><div>LineBreak:
+  - LF
+  - CRLF
+</div></code></pre>
+<p><em>if first symbol after token-key is '@' then ignore reference</em>
+<em>for (</em>) -&gt; token-key*</p>
+<p>scalar</p>
+<p>token-types:</p>
+<ul>
+<li>token-scalar</li>
+<li>token-list</li>
+<li>token-dictionary</li>
+<li>token-object</li>
+<li>token-key</li>
+<li>token-property</li>
+<li>token-reference</li>
+</ul>
+<p>token: <code>${text} -&gt; (token-scalar, token-list, token-dictionary or token-object)</code>
+token: <code>this is ${text} text -&gt; (token-scalar)</code></p>
+<p>token-key: token-scalar [partial-scalar]* (1)</p>
+<p>text: this is text</p>
+<p>list</p>
+<p>If second line start substring is <code>\t- </code> then token-key have token-list type
+The starting position of the substring is determined by the LevelIndent</p>
+<p><a href="%5Btoken%5D">token</a>:\n{\t- <a href="%5Btoken%5D">token</a>\n}{\t- <a href="%5Btoken%5D">token</a>\n}{\t- <a href="%5Btoken%5D">token</a>}</p>
+<p><a href="%5Btoken%5D">token</a>:</p>
+<ul>
+<li><a href="%5Btoken%5D">token</a></li>
+<li><a href="%5Btoken%5D">token</a></li>
+<li><a href="%5Btoken%5D">token</a></li>
+</ul>
+<p>token-key: token-list [reference] (2)</p>
+<ul>
+<li>token-scalar [partial-scalar]*</li>
+<li>token-scalar [partial-scalar]*</li>
+<li>token-scalar [partial-scalar]*</li>
+</ul>
+<p>names:</p>
+<ul>
+<li>John</li>
+<li>Bob</li>
+<li>Patrik</li>
+</ul>
+<p>dictionary</p>
+<p><a href="%5Btoken%5D">token</a>:
+<a href="%5Btoken%5D">token</a>: <a href="%5Btoken%5D">token</a>
+<a href="%5Btoken%5D">token</a>: <a href="%5Btoken%5D">token</a>
+<a href="%5Btoken%5D">token</a>: <a href="%5Btoken%5D">token</a></p>
+<p>token-key: token-dictionary [reference] (3)
+token-key: token-scalar [partial-scalar]*
+token-key: token-scalar [partial-scalar]*
+token-key: token-scalar [partial-scalar]*</p>
+<p>phones:
+John: 88005552524
+Bob: 88005552525
+Patrik: 88005552526</p>
+<p>token-scalar extended token
+token-key extended of token-scalar</p>
+<p>token-scalar, token-list and token-dictionary follow token-key</p>
+<p>What is type of token?
+When parsing, data should be presented in 1 dimensional form.</p>
+<p>Scalar</p>
+<p>delimiter:
+<code>: </code> -&gt; (token-scalar)</p>
+<p>List</p>
+<p>token:</p>
+<ul>
+<li>[]
+-&gt; (token-list)</li>
+</ul>
+<p>token: ${token-ref}</p>
+<ul>
+<li>[]
+-&gt; (token-list)</li>
+</ul>
+<p>regular expression for LF and CRLF format
+delimiter:</p>
+<p><code>:\n(\t)*- </code> -&gt; (token-list)
+<code>: ${token-ref}\n(\t)*- </code> -&gt; (token-list) (override)</p>
+<p><code>:\n(\t)*- </code> -&gt; (token-list)
+<code>: ${token-ref}\n(\t)*- </code> -&gt; (token-list) (override)</p>
+<p>(\t)* - count tab indent is LevelIndent</p>
+<p>token:</p>
+<ul>
+<li>token</li>
+<li>token</li>
+<li>token</li>
+<li>token</li>
+</ul>
+<p>token:\n\t- token\n\t- token\n\t- token\n\t- token
+token:\n\t- token\n\t- token\n\t- token\n\t- token</p>
+<p><code>\n\t- </code>{token}<code>\n\t- </code>{token}<code>\n\t- </code>{token}<code>\n\t- </code>{token}
+<code>\t- </code>{token}<code>\n\t- </code>{token}<code>\n\t- </code>{token}<code>\n\t- </code>{token}</p>
+<p>{token}<code>\n\t- </code>{token}<code>\n\t- </code>{token}<code>\n\t- </code>{token}</p>
+<p>delimiter between items of list for LF and CRLF</p>
+<p><code>\n\t- </code>
+<code>\n\t- </code></p>
+<p>dictonary or object</p>
+<p>token:
+token: token</p>
+<p>regular expression for LF and CRLF format
+delimiter:</p>
+<p><code>:\n(\t)*</code> -&gt; (token-object, token-dictionary)
+<code>: ${token-reference}\n(\t)*</code> -&gt; (token-object, token-dictionary) (override)</p>
+<p><code>:\n(\t)*</code> -&gt; (token-object, token-dictionary)
+<code>:\n${token-reference}(\t)*</code> -&gt; (token-object, token-dictionary) (override)</p>
+<p>delimiter between items of object property or items of dictionary</p>
+<p>token:
+token: token
+token: token
+token: token
+token: token</p>
+<p><code>token:\n\ttoken: token\n\ttoken: token\n\ttoken: token\n\ttoken: token     \n\ttoken: token\n\ttoken: token\n\ttoken: token\n\ttoken: token       token: token\n\ttoken: token\n\ttoken: token\n\ttoken: token</code></p>
+<p>delete first token (key) and delimiter for LF and CRLF</p>
+<p>{token: token}<code>\n\t</code>{token: token}<code>\n\t</code>{token: token}<code>\n\t</code>{token: token}
+{token: token}<code>\n\t</code>{token: token}<code>\n\t</code>{token: token}<code>\n\t</code>{token: token}</p>
+<p>delimiter:
+<code>\n(\t)*</code>
+<code>\n(\t)*</code></p>
+<p>token:
+token:</p>
+<ul>
+<li>token: token
+token: token
+token: token</li>
+</ul>
+<p><code>token:\n\ttoken:\n\t\t- token: token\n\t\t\ttoken: token\n\t\t\ttoken: token       token:\n\t\t- token: token\n\t\t\ttoken: token\n\t\t\ttoken: token           \t\t- token: token\n\t\t\ttoken: token\n\t\t\ttoken: token             token: token\n\t\t\ttoken: token\n\t\t\ttoken: token</code></p>
+<p>\n - delimiter
+\t - count tab is level indent</p>
+<p>Exceptions:
+SyntaxException:</p>
+<ul>
+<li>IndentException</li>
+<li>DelimiterException</li>
+<li>ReferenceException</li>
+</ul>
+<p>TypeException:</p>
+<ul>
+<li>Int32Exception</li>
+</ul>
+<p><code>person:\n\tpersonal data:\n\t\tfirstName: Bob\n\t\tmiddleName: John\n\t\tsecondName: Patick\n\t\tage: 18\n\t\tsex: male\n\taddress:\n\t\tcity: Moscow\n\t\tstreet: Red\n\t\thome: 3\n\tvisitCountries:\n\t\t- Russia\n\t\t- China\n\t\t- USA\n\tfriends:</code></p>
+
+</body>
+</html>

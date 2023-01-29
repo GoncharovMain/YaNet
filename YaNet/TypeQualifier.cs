@@ -4,206 +4,206 @@ using YaNet.Exceptions;
 
 namespace YaNet
 {
-	public class QualifyType
-	{
-		public QualifyType()
-		{
-			
-		}
-	}
+    public class QualifyType
+    {
+        public QualifyType()
+        {
 
-	public class TypeQualifier
-	{
-		private Peeker _peeker;
-		private StringBuilder _buffer;
-		private Mark _mark;
+        }
+    }
 
-		private int _indent;
+    public class TypeQualifier
+    {
+        private Peeker _peeker;
+        private StringBuilder _buffer;
+        private Mark _mark;
 
-		private Row _row;
+        private int _indent;
 
-		public TypeQualifier(StringBuilder text, Row row) : this(text, row.Mark) { }
+        private Row _row;
 
-		public TypeQualifier() { }
+        public TypeQualifier(StringBuilder text, Row row) : this(text, row.Mark) { }
 
-		public TypeQualifier(string text) : this(new StringBuilder(text), new Mark(0, text.Length - 1)) { }
+        public TypeQualifier() { }
 
-		public TypeQualifier(StringBuilder buffer) : this(buffer, new Mark(0, buffer.Length)) { }
+        public TypeQualifier(string text) : this(new StringBuilder(text), new Mark(0, text.Length - 1)) { }
 
-		public TypeQualifier(string text, Mark mark) : this(new StringBuilder(text), mark) { }
+        public TypeQualifier(StringBuilder buffer) : this(buffer, new Mark(0, buffer.Length)) { }
 
-		public TypeQualifier(StringBuilder buffer, Mark mark)
-		{
-			_peeker = new Peeker(buffer, mark.Start, mark.End);
-			_buffer = buffer;
-			_mark = mark;
-			_indent = _peeker.Counter("\t");
-		}
+        public TypeQualifier(string text, Mark mark) : this(new StringBuilder(text), mark) { }
 
-		public Row QualifyFeature()
-		{
-			bool isItemRow = _peeker.Contains("- ");
-			bool isKeyRow = _peeker.Contains(":\n");
-			bool isKeyValueRow = _peeker.Contains(": ");
+        public TypeQualifier(StringBuilder buffer, Mark mark)
+        {
+            _peeker = new Peeker(buffer, mark.Start, mark.End);
+            _buffer = buffer;
+            _mark = mark;
+            _indent = _peeker.Counter("\t");
+        }
 
-			bool isItemKeyRow = isItemRow && isKeyRow;
-			bool isItemKeyValueRow = isItemRow && isKeyValueRow;
+        public Row QualifyFeature()
+        {
+            bool isItemRow = _peeker.Contains("- ");
+            bool isKeyRow = _peeker.Contains(":\n");
+            bool isKeyValueRow = _peeker.Contains(": ");
 
-			Console.Write($"{isItemRow}\t{isKeyRow}\t{isKeyValueRow}\t{isItemKeyRow}\t{isItemKeyValueRow}\t");
+            bool isItemKeyRow = isItemRow && isKeyRow;
+            bool isItemKeyValueRow = isItemRow && isKeyValueRow;
 
-			if (isItemKeyValueRow)
-			{
-				return QualifyType<ItemKeyValueRow>();
-			}
+            Console.Write($"{isItemRow}\t{isKeyRow}\t{isKeyValueRow}\t{isItemKeyRow}\t{isItemKeyValueRow}\t");
 
-			if (isItemKeyRow)
-			{
-				return QualifyType<ItemKeyRow>();
-			}
+            if (isItemKeyValueRow)
+            {
+                return QualifyType<ItemKeyValueRow>();
+            }
 
-			if (isItemRow)
-			{
-				return QualifyType<ItemRow>();
-			}
+            if (isItemKeyRow)
+            {
+                return QualifyType<ItemKeyRow>();
+            }
 
-			if (isKeyValueRow)
-			{
-				return QualifyType<KeyValueRow>();
-			}
+            if (isItemRow)
+            {
+                return QualifyType<ItemRow>();
+            }
 
-			if (isKeyRow)
-			{
-				return QualifyType<KeyRow>();
-			}
+            if (isKeyValueRow)
+            {
+                return QualifyType<KeyValueRow>();
+            }
 
-
-			bool hasNotFeature = !(isItemRow || isKeyRow || isKeyValueRow || isItemKeyValueRow || isItemKeyRow);
-
-			if (hasNotFeature)
-			{
-				throw new SyntaxException($"'{_peeker}' has not features of type.");
-			}
-
-			return null;
-		}
-
-		public Row QualifyType<T>() where T : Row
-		{
-			// * KeyValueRow
-			// * ItemRow
-			// * KeyRow
-			// * ItemKeyRow
-			// * ItemKeyValueRow
-
-			if (typeof(T) == typeof(KeyValueRow))
-			{
-				string delimiter = ": ";
-
-				int startKey = _mark.Start + _indent;
-
-				int endKey = _peeker.IndexOf(delimiter) - 1;
+            if (isKeyRow)
+            {
+                return QualifyType<KeyRow>();
+            }
 
 
-				int startValue = endKey + delimiter.Length + 1;
+            bool hasNotFeature = !(isItemRow || isKeyRow || isKeyValueRow || isItemKeyValueRow || isItemKeyRow);
 
-				int endValue = _peeker.IndexOf("\n") - 1;
+            if (hasNotFeature)
+            {
+                throw new SyntaxException($"'{_peeker}' has not features of type.");
+            }
 
-				if (endValue == -2)
-					endValue = _mark.End;
+            return null;
+        }
 
-				Console.WriteLine($"[{_indent}]KeyValueRow: '{new Peeker(_buffer, startKey, endKey)}' : '{new Peeker(_buffer, startValue, endValue)}'");
+        public Row QualifyType<T>() where T : Row
+        {
+            // * KeyValueRow
+            // * ItemRow
+            // * KeyRow
+            // * ItemKeyRow
+            // * ItemKeyValueRow
 
-				return new KeyValueRow(_indent, _mark, (startKey, endKey), (startValue, endValue));
-			}
+            if (typeof(T) == typeof(KeyValueRow))
+            {
+                string delimiter = ": ";
 
-			if (typeof(T) == typeof(ItemRow))
-			{
-				int startItem = _mark.Start + _indent + "- ".Length;
+                int startKey = _mark.Start + _indent;
 
-				int endItem = _peeker.IndexOf("\n") - 1;
-
-				if (endItem == -2)
-					endItem = _mark.End;
-
-				Console.WriteLine($"[{_indent}]ItemRow: - '{new Peeker(_buffer, startItem, endItem)}'");
-
-				return new ItemRow(_indent, _mark, (startItem, endItem));
-			}
-
-			if (typeof(T) == typeof(KeyRow))
-			{
-				int startKey = _mark.Start + _indent;
-
-				int endKey = _peeker.IndexOf(":") - 1;
-
-				Console.WriteLine($"[{_indent}]KeyRow: '{new Peeker(_buffer, startKey, endKey)}':");
-			
-				return new KeyRow(_indent, _mark, (startKey, endKey));
-			}
-
-			if (typeof(T) == typeof(ItemKeyRow))
-			{
-				int startKey = _mark.Start + _indent + "- ".Length;
-
-				int endKey = _peeker.IndexOf(":") - 1;
-
-				Console.WriteLine($"[{_indent}]ItemKeyRow: - '{new Peeker(_buffer, startKey, endKey)}':");
-
-				return new ItemKeyRow(_indent, _mark, (startKey, endKey));
-			}
-
-			if (typeof(T) == typeof(ItemKeyValueRow))
-			{
-				string delimiter = ": ";
-
-				int startKey = _mark.Start + _indent + "- ".Length;
-
-				int endKey = _peeker.IndexOf(delimiter) - 1;
-
-				
-				int startValue = endKey + delimiter.Length + 1;
-
-				int endValue = _peeker.IndexOf("\n") - 1;
-
-				if (endValue == -2)
-					endValue = _mark.End;
+                int endKey = _peeker.IndexOf(delimiter) - 1;
 
 
-				Console.WriteLine($"[{_indent}]ItemKeyValueRow: - '{new Peeker(_buffer, startKey, endKey)}': '{new Peeker(_buffer, startValue, endValue)}'");
+                int startValue = endKey + delimiter.Length + 1;
 
-				return new ItemKeyValueRow(_indent, _mark, (startKey, endKey), (startValue, endValue));
-			}
+                int endValue = _peeker.IndexOf("\n") - 1;
+
+                if (endValue == -2)
+                    endValue = _mark.End;
+
+                Console.WriteLine($"[{_indent}]KeyValueRow: '{new Peeker(_buffer, startKey, endKey)}' : '{new Peeker(_buffer, startValue, endValue)}'");
+
+                return new KeyValueRow(_indent, _mark, (startKey, endKey), (startValue, endValue));
+            }
+
+            if (typeof(T) == typeof(ItemRow))
+            {
+                int startItem = _mark.Start + _indent + "- ".Length;
+
+                int endItem = _peeker.IndexOf("\n") - 1;
+
+                if (endItem == -2)
+                    endItem = _mark.End;
+
+                Console.WriteLine($"[{_indent}]ItemRow: - '{new Peeker(_buffer, startItem, endItem)}'");
+
+                return new ItemRow(_indent, _mark, (startItem, endItem));
+            }
+
+            if (typeof(T) == typeof(KeyRow))
+            {
+                int startKey = _mark.Start + _indent;
+
+                int endKey = _peeker.IndexOf(":") - 1;
+
+                Console.WriteLine($"[{_indent}]KeyRow: '{new Peeker(_buffer, startKey, endKey)}':");
+
+                return new KeyRow(_indent, _mark, (startKey, endKey));
+            }
+
+            if (typeof(T) == typeof(ItemKeyRow))
+            {
+                int startKey = _mark.Start + _indent + "- ".Length;
+
+                int endKey = _peeker.IndexOf(":") - 1;
+
+                Console.WriteLine($"[{_indent}]ItemKeyRow: - '{new Peeker(_buffer, startKey, endKey)}':");
+
+                return new ItemKeyRow(_indent, _mark, (startKey, endKey));
+            }
+
+            if (typeof(T) == typeof(ItemKeyValueRow))
+            {
+                string delimiter = ": ";
+
+                int startKey = _mark.Start + _indent + "- ".Length;
+
+                int endKey = _peeker.IndexOf(delimiter) - 1;
 
 
-			return null;
-		}
+                int startValue = endKey + delimiter.Length + 1;
+
+                int endValue = _peeker.IndexOf("\n") - 1;
+
+                if (endValue == -2)
+                    endValue = _mark.End;
 
 
-		public string ScalarTrace()
-		{
-			int levelIndent = _peeker.CountIndent("\t");
+                Console.WriteLine($"[{_indent}]ItemKeyValueRow: - '{new Peeker(_buffer, startKey, endKey)}': '{new Peeker(_buffer, startValue, endValue)}'");
 
-			string nextIndent = '\t'.Repeat(levelIndent);
-		
-			return $"{nextIndent}";
-		}
+                return new ItemKeyValueRow(_indent, _mark, (startKey, endKey), (startValue, endValue));
+            }
 
-		public string ListTrace()
-		{
-			int levelIndent = _peeker.CountIndent("\t");
 
-			string nextIndent = '\t'.Repeat(levelIndent + 1);
+            return null;
+        }
 
-			return $"{nextIndent}- ";
-		}
 
-		public string ObjectTrace()
-		{
-			int levelIndent = _peeker.CountIndent("\t");
+        public string ScalarTrace()
+        {
+            int levelIndent = _peeker.IndentLevel("\t");
 
-			string nextIndent = '\t'.Repeat(levelIndent + 1);
+            string nextIndent = '\t'.Repeat(levelIndent);
 
-			return nextIndent;
-		}
-	}
+            return $"{nextIndent}";
+        }
+
+        public string ListTrace()
+        {
+            int levelIndent = _peeker.IndentLevel("\t");
+
+            string nextIndent = '\t'.Repeat(levelIndent + 1);
+
+            return $"{nextIndent}- ";
+        }
+
+        public string ObjectTrace()
+        {
+            int levelIndent = _peeker.IndentLevel("\t");
+
+            string nextIndent = '\t'.Repeat(levelIndent + 1);
+
+            return nextIndent;
+        }
+    }
 }
