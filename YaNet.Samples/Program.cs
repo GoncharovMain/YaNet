@@ -5,6 +5,7 @@ using System.Reflection;
 using YaNet.Samples.Context;
 using YaNet.Nodes;
 using System.IO;
+using System.Runtime.Serialization;
 
 namespace YaNet.Samples
 {
@@ -38,12 +39,40 @@ namespace YaNet.Samples
         {
             public List<int> Array { get; set; }
             public Dictionary<string, string> Dict { get; set; }
+
+            public Dictionary<string, Meta> Persons { get; set; }
+        }
+
+        public class Meta
+        {
+            public int Age { get; set; }
         }
 
         public static void Main()
         {
             string yaml = "Array:\n\t- 15\n\t- 5\n\t- 7\n\t- 22\n\t- 365\n\t- 5000\n\t- -2345" +
-                "\nDict:\n\tname: John\n\tage: 18\n\tsex: male";
+                "\nDict:\n\tName: John\n\tAge: 18\n\tSex: male\n" +
+                "Persons:\n\tJohn:\n\t\tAge: 18\n\tBob:\n\t\tAge: 20";
+
+            Console.WriteLine(yaml);
+            Console.WriteLine();
+
+
+            Activator.CreateInstance("System.String", "System.String");
+            //
+            FormatterServices.GetUninitializedObject(typeof(string));
+
+            Type type = typeof(Dictionary<string, Meta>);
+
+            Type[] genericArguments = type.GetGenericArguments();
+
+            Console.WriteLine($"generic len: {genericArguments.Length}");
+
+            Type keyType = genericArguments[0];
+            Type valueType = genericArguments[1];
+
+            Console.WriteLine($"keyType: {keyType.Name}");
+            Console.WriteLine($"valueType: {valueType.Name}");
 
             Deserializer deserializer = new Deserializer(yaml);
 
@@ -53,7 +82,9 @@ namespace YaNet.Samples
             {
                 Console.WriteLine(item);
             }
+
             Console.WriteLine("len" + collect.Dict.Count);
+
             foreach (var item in collect.Dict)
             {
                 Console.WriteLine($"key: {item.Key} value: {item.Value}");
