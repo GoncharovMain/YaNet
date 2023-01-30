@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "YaNet.Test": {
+      "commandName": "Project",
+      "commandLineArgs": "dotnet test --logger \"console;verbosity=detailed\"",
+      "workingDirectory": "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Test"
+    }
+  }
+}

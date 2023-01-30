@@ -37,11 +37,13 @@ namespace YaNet.Samples
         public class Collect
         {
             public List<int> Array { get; set; }
+            public Dictionary<string, string> Dict { get; set; }
         }
 
         public static void Main()
         {
-            string yaml = "Array:\n\t- 15\n\t- 5\n\t- 7\n\t- 22\n\t- 365\n\t- 5000\n\t- -2345";
+            string yaml = "Array:\n\t- 15\n\t- 5\n\t- 7\n\t- 22\n\t- 365\n\t- 5000\n\t- -2345" +
+                "\nDict:\n\tname: John\n\tage: 18\n\tsex: male";
 
             Deserializer deserializer = new Deserializer(yaml);
 
@@ -50,6 +52,11 @@ namespace YaNet.Samples
             foreach (var item in collect.Array)
             {
                 Console.WriteLine(item);
+            }
+            Console.WriteLine("len" + collect.Dict.Count);
+            foreach (var item in collect.Dict)
+            {
+                Console.WriteLine($"key: {item.Key} value: {item.Value}");
             }
 
         }
