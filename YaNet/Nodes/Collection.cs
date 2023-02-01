@@ -8,26 +8,11 @@ namespace YaNet.Nodes
         {
             Nodes = nodes;
         }
-        public void Init(object obj, StringBuilder buffer)
+
+        public void Init(ref object obj, StringBuilder buffer)
         {
-            Marker marker = new Marker(buffer);
+            /*
 
-            if (Nodes[0] is Scalar)
-            {
-                for (int i = 0; i < Nodes.Length; i++)
-                {
-                    Scalar scalar = Nodes[i] as Scalar;
-
-                    string value = marker.Buffer(scalar.Value);
-
-                    obj.GetType().GetGenericTypeDefinition();
-                }
-            }
-
-
-            
-            /* 
-            
             Node.Collection.Pair[]
 
             Person Person;
@@ -39,10 +24,10 @@ namespace YaNet.Nodes
                 sex: male
 
             Node.Collection.(Item.Scalar)[]
-            
+
             List<string> Persons;
             string[] Persons;
-            
+
             persons:
                 - John
                 - Bob
@@ -90,84 +75,82 @@ namespace YaNet.Nodes
             // List<string>
             // List<Person>
 
-            
+
             // Dictionary<string, string> Pair[]
             // Dictionary<string, Person> (Node.Collection)[]
 
+            Marker marker = new Marker(buffer);
 
             Type type = obj.GetType();
-
-            Console.WriteLine($"init obj type: {obj.GetType().Name}");
 
             if (type.IsGenericType)
             {
                 Type genericType = type.GetGenericTypeDefinition();
 
-                // as List<>
                 if (genericType == typeof(List<>))
                 {
-                    
-                    
+                    Type itemType = type.GetGenericArguments().First();
+
                     foreach (INode node in Nodes)
                     {
+                        object item = Instancer.Empty(itemType);
 
-                        Scalar scalar = node as Scalar;                    
-    
-                        string value = marker.Buffer(scalar.Value);
 
-                        Type typeItem = type.GetGenericArguments().Single();
-
-                        object item = Conv.Converter(typeItem, value);
+                        node.Init(ref item, buffer);
 
                         obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
                     }
-                    
-                    Console.WriteLine($"this is List");
-                    
+
                     return;
                 }
 
-                // as Dictionary<,>
                 if (genericType == typeof(Dictionary<,>))
                 {
+                    Type[] genericArguments = type.GetGenericArguments();
+
+                    Type keyType = genericArguments[0];
+                    Type valueType = genericArguments[1];
+
                     foreach (INode node in Nodes)
                     {
-                        Pair pair = node as Pair;
+                        object key = Instancer.Empty(keyType);
+                        object value = Instancer.Empty(valueType);
 
-                        Type[] genericArguments = type.GetGenericArguments();
+                        Console.WriteLine($"keyType: {key.GetType()} valueType: {value.GetType()}");
 
-                        Type keyType = genericArguments[0];
-                        Type valueType = genericArguments[1];
+                        object parameters = new object[] { key, value };
 
-                        object key = Conv.Converter(keyType, marker.Buffer(pair.Key));
+                        node.Init(ref parameters, buffer);
 
-                        object value = Conv.Converter(valueType, marker.Buffer(pair.Value));
+                        object[] pair = (object[])parameters;
 
-                        obj.GetType().GetMethod("Add").Invoke(obj, new[] { key, value });
+                        obj.GetType().GetMethod("Add").Invoke(obj, pair);
                     }
-
-                    Console.WriteLine($"this is dictionary");
 
                     return;
                 }
-            }
 
-
-            if (type.IsArray)
-            {
-                // as one dimensional array
-                
-                type = obj.GetType().GetElementType();
-
-                object array = Array.CreateInstance(type, Nodes.Length);
-
-                return;
-                //return;
+                throw new Exception("Not support generic type: '{genericType.Name}'.");
             }
 
             for (int i = 0; i < Nodes.Length; i++)
             {
-                Nodes[i].Init(obj, buffer);
+                Mark propMark = Nodes[i] is Node node ? node.Key : ((Pair)Nodes[i]).Key;
+
+
+                string prop = marker.Buffer(propMark);
+
+                Console.WriteLine($"node prop name: {prop} type: {type.Name}");
+
+                PropertyInfo property = type.GetProperty(prop);
+
+                Console.WriteLine($"type prop: {property?.PropertyType?.Name}");
+
+                object value = Instancer.Empty(property.PropertyType);
+
+                Nodes[i].Init(ref value, buffer);
+
+                property.SetValue(obj, value);
             }
         }
 

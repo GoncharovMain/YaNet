@@ -24,10 +24,9 @@ namespace YaNet
 
             Collection collection = definer.DefineCollection();
 
-            collection.Print(_buffer);
+            collection.Init(ref obj, _buffer);
 
-            foreach (INode node in collection.Nodes)
-                node.Init(obj, _buffer);
+            collection.Print(_buffer);
 
             return obj;
         }

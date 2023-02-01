@@ -11,17 +11,18 @@ namespace YaNet.Nodes
             Value = value;
         }
 
-        public void Init(object obj, StringBuilder buffer)
+        public void Init(ref object obj, StringBuilder buffer)
         {
+            object[] parameters = (object[])obj;
+
             Marker marker = new Marker(buffer);
 
-            string key = marker.Buffer(Key);
-            string value = marker.Buffer(Value);
-
-            PropertyInfo property = obj.GetType().GetProperty(key);
-
-            property.SetValue(obj, Conv.Converter(property.PropertyType, value));
+            parameters[0] = Instancer.ToConvert(parameters[0].GetType(), marker.Buffer(Key));
+            parameters[1] = Instancer.ToConvert(parameters[1].GetType(), marker.Buffer(Value));
         }
+
+        public static implicit operator Node(Pair pair)
+            => new Node(pair.Key, null);
 
         public void Print(StringBuilder buffer)
         {

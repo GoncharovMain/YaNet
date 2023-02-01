@@ -23,7 +23,7 @@ namespace YaNet.Nodes
 
             property.SetValue(obj, inner);
 
-            Nodes.Init(inner, buffer);
+            Nodes.Init(ref inner, buffer);
         }
 
         public static explicit operator NodeReference(Pair pair)

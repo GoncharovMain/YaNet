@@ -58,21 +58,6 @@ namespace YaNet.Samples
             Console.WriteLine();
 
 
-            Activator.CreateInstance("System.String", "System.String");
-            //
-            FormatterServices.GetUninitializedObject(typeof(string));
-
-            Type type = typeof(Dictionary<string, Meta>);
-
-            Type[] genericArguments = type.GetGenericArguments();
-
-            Console.WriteLine($"generic len: {genericArguments.Length}");
-
-            Type keyType = genericArguments[0];
-            Type valueType = genericArguments[1];
-
-            Console.WriteLine($"keyType: {keyType.Name}");
-            Console.WriteLine($"valueType: {valueType.Name}");
 
             Deserializer deserializer = new Deserializer(yaml);
 

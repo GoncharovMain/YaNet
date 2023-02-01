@@ -8,9 +8,9 @@ namespace YaNet.Nodes
             Node = node;
         }
 
-        public void Init(object obj, StringBuilder buffer)
+        public void Init(ref object obj, StringBuilder buffer)
         {
-            Node.Init(obj, buffer);
+            Node.Init(ref obj, buffer);
         }
 
         public void Print(StringBuilder buffer)

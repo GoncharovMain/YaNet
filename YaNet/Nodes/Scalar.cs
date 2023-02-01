@@ -12,16 +12,13 @@ namespace YaNet.Nodes
         public static implicit operator String(Scalar scalar)
             => scalar.ToString();
 
-        public void Init(object obj, StringBuilder buffer)
+        public void Init(ref object obj, StringBuilder buffer)
         {
             Marker marker = new Marker(buffer);
+
             string value = marker.Buffer(Value);
 
-            Type type = obj.GetType().GetGenericArguments().Single();
-
-            object item = Conv.Converter(type, value);
-
-            obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
+            obj = Instancer.ToConvert(obj.GetType(), value);
         }
 
         public void Print(StringBuilder buffer)
