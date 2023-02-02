@@ -12,7 +12,23 @@ namespace YaNet.Nodes
         }
         public void Init(ref object obj, StringBuilder buffer)
         {
-            Nodes.Init(ref obj, buffer);
+            Marker marker = new Marker(buffer);
+
+            string propertyName = marker.Buffer(Key);
+
+            Console.WriteLine($"In Node, object type: {obj.GetType().Name} for property: {propertyName} of type: ");
+
+            PropertyInfo property = obj.GetType().GetProperty(propertyName);
+
+
+
+
+
+            object value = Instancer.Empty(property.PropertyType);
+
+            Console.WriteLine($"Property type of {obj.GetType().Name} - {property.PropertyType.Name}");
+
+            Nodes.Init(ref value, buffer);
         }
 
         public virtual void Print(StringBuilder buffer)

@@ -57,6 +57,8 @@ namespace YaNet.Samples
             Console.WriteLine(yaml);
             Console.WriteLine();
 
+            Console.WriteLine(new String('=', 40));
+            Console.WriteLine();
 
 
             Deserializer deserializer = new Deserializer(yaml);

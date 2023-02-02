@@ -2,6 +2,17 @@ namespace YaNet
 {
     public static class Instancer
     {
+        public static string[] SimpleTypes =
+        {
+            "Int16", "UInt16",
+            "Byte", "SByte",
+            "Int32", "UInt32",
+            "Int64", "UInt64",
+            "Single", "Double", "Decimal",
+            "Boolean",
+            "Char", "String"
+        };
+
         public static object ToConvert(Type type, string value)
             => type.Name switch
             {
@@ -25,9 +36,11 @@ namespace YaNet
         public static object Empty(Type type)
             => type.Name switch
             {
-                "String" => String.Empty,
-                "System.String" => String.Empty,
+                "String" => string.Empty,
                 _ => Activator.CreateInstance(type)
             };
+
+        public static bool IsSimple(this Type type)
+            => SimpleTypes.Contains(type.Name);
     }
 }

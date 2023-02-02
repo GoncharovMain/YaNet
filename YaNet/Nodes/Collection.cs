@@ -1,3 +1,5 @@
+using System.Xml.Linq;
+
 namespace YaNet.Nodes
 {
     public class Collection : INode
@@ -71,21 +73,16 @@ namespace YaNet.Nodes
 
              */
 
-            // List<int>
-            // List<string>
-            // List<Person>
-
-
-            // Dictionary<string, string> Pair[]
-            // Dictionary<string, Person> (Node.Collection)[]
-
             Marker marker = new Marker(buffer);
 
-            Type type = obj.GetType();
 
+
+            Type type = obj.GetType();
+               
             if (type.IsGenericType)
             {
                 Type genericType = type.GetGenericTypeDefinition();
+
 
                 if (genericType == typeof(List<>))
                 {
@@ -95,8 +92,9 @@ namespace YaNet.Nodes
                     {
                         object item = Instancer.Empty(itemType);
 
-
-                        node.Init(ref item, buffer);
+                        Console.WriteLine($"\tType of List<{itemType.Name}>");
+                        
+                        node.Init(ref obj, buffer);
 
                         obj.GetType().GetMethod("Add").Invoke(obj, new[] { item });
                     }
@@ -116,13 +114,17 @@ namespace YaNet.Nodes
                         object key = Instancer.Empty(keyType);
                         object value = Instancer.Empty(valueType);
 
-                        Console.WriteLine($"keyType: {key.GetType()} valueType: {value.GetType()}");
+                        
+                        Console.Write($"Type of node: {node.GetType().Name}. ");
 
                         object parameters = new object[] { key, value };
 
                         node.Init(ref parameters, buffer);
 
+
                         object[] pair = (object[])parameters;
+
+                        Console.WriteLine($"\tType of Dictionary<{keyType.Name}, {valueType.Name}> => ['{pair[0]}', '{pair[1]}'].");
 
                         obj.GetType().GetMethod("Add").Invoke(obj, pair);
                     }
@@ -130,27 +132,20 @@ namespace YaNet.Nodes
                     return;
                 }
 
-                throw new Exception("Not support generic type: '{genericType.Name}'.");
+                throw new Exception($"Not support generic type: '{genericType.Name}'.");
             }
 
             for (int i = 0; i < Nodes.Length; i++)
             {
-                Mark propMark = Nodes[i] is Node node ? node.Key : ((Pair)Nodes[i]).Key;
+                //Mark propMark = Nodes[i] is Node node ? node.Key : ((Pair)Nodes[i]).Key;
 
+                Console.WriteLine($"Init object in collection: {obj.GetType().Name}");
 
-                string prop = marker.Buffer(propMark);
+                Nodes[i].Init(ref obj, buffer);
 
-                Console.WriteLine($"node prop name: {prop} type: {type.Name}");
+                Console.WriteLine();
 
-                PropertyInfo property = type.GetProperty(prop);
-
-                Console.WriteLine($"type prop: {property?.PropertyType?.Name}");
-
-                object value = Instancer.Empty(property.PropertyType);
-
-                Nodes[i].Init(ref value, buffer);
-
-                property.SetValue(obj, value);
+                //property.SetValue(obj, value);
             }
         }
 

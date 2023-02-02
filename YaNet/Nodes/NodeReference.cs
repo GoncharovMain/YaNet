@@ -10,7 +10,7 @@ namespace YaNet.Nodes
             Reference = reference;
         }
 
-        public new void Init(object obj, StringBuilder buffer)
+        public new void Init(ref object obj, StringBuilder buffer)
         {
             Marker marker = new Marker(buffer);
 
@@ -19,7 +19,7 @@ namespace YaNet.Nodes
             PropertyInfo property = obj.GetType().GetProperty(key);
 
 
-            object inner = Activator.CreateInstance(property.PropertyType);
+            object inner = Activator.CreateInstance(obj.GetType());
 
             property.SetValue(obj, inner);
 
