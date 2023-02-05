@@ -16,19 +16,25 @@ namespace YaNet.Nodes
 
             string propertyName = marker.Buffer(Key);
 
-            Console.WriteLine($"In Node, object type: {obj.GetType().Name} for property: {propertyName} of type: ");
+            // for dictionary
+            if (obj.GetType() == typeof(object[]))
+            {
+                var pair = (object[])obj;
+
+                pair[0] = Instancer.ToConvert(pair[0].GetType(), propertyName);
+
+                Nodes.Init(ref pair[1], buffer);
+
+                return;
+            }
 
             PropertyInfo property = obj.GetType().GetProperty(propertyName);
 
-
-
-
-
             object value = Instancer.Empty(property.PropertyType);
 
-            Console.WriteLine($"Property type of {obj.GetType().Name} - {property.PropertyType.Name}");
-
             Nodes.Init(ref value, buffer);
+
+            property.SetValue(obj, value);
         }
 
         public virtual void Print(StringBuilder buffer)

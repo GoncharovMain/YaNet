@@ -13,12 +13,26 @@ namespace YaNet.Nodes
 
         public void Init(ref object obj, StringBuilder buffer)
         {
-            object[] parameters = (object[])obj;
-
             Marker marker = new Marker(buffer);
 
-            parameters[0] = Instancer.ToConvert(parameters[0].GetType(), marker.Buffer(Key));
-            parameters[1] = Instancer.ToConvert(parameters[1].GetType(), marker.Buffer(Value));
+            if (obj.GetType() == typeof(object[]))
+            {
+                object[] parameters = (object[])obj;
+
+                parameters[0] = Instancer.ToConvert(parameters[0].GetType(), marker.Buffer(Key));
+                parameters[1] = Instancer.ToConvert(parameters[1].GetType(), marker.Buffer(Value));
+
+                return;
+            }
+
+            Type type = obj.GetType();
+
+            string propertyName = marker.Buffer(Key);
+            string value = marker.Buffer(Value);
+
+            PropertyInfo property = type.GetProperty(propertyName);
+
+            property.SetValue(obj, Instancer.ToConvert(property.PropertyType, value));
         }
 
         public static implicit operator Node(Pair pair)

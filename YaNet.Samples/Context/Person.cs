@@ -4,7 +4,7 @@ namespace YaNet.Samples.Context
     {
         public Person Person { get; set; }
         public IpAddress IpAddress { get; set; }
-        public int[][] Matrix { get; set; }
+        //public int[][] Matrix { get; set; }
         public List<string> Matrices { get; set; }
     }
 
@@ -17,7 +17,7 @@ namespace YaNet.Samples.Context
 
         public List<Friend> Friends { get; set; }
 
-        public List<string> Languages { get; set; }
+        //public List<string> Languages { get; set; }
     }
 
     public enum Sex
@@ -31,7 +31,7 @@ namespace YaNet.Samples.Context
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public int Age { get; set; }
-        public Sex Sex { get; set; }
+        public string Sex { get; set; }
     }
 
     public class Address
@@ -53,6 +53,6 @@ namespace YaNet.Samples.Context
     {
         public string Ip { get; set; }
         public string Port { get; set; }
-        public Dictionary<string, string> Protocol { get; set; }
+        public Dictionary<string, bool> Protocol { get; set; }
     }
 }
