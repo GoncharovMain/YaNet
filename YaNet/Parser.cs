@@ -23,7 +23,7 @@ namespace YaNet
             Definer definer = new Definer(_buffer, rows);
 
             // ignore first comments
-            definer.Next();
+            definer.FirstNext();
 
             Collection collection = definer.DefineCollection();
 

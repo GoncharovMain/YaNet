@@ -6,6 +6,7 @@ using YaNet.Samples.Context;
 using YaNet.Nodes;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Data.Common;
 
 namespace YaNet.Samples
 {
@@ -39,6 +40,26 @@ namespace YaNet.Samples
     {
         public int Age { get; set; }
     }
+    public class IP
+    {
+        public int[] Bytes { get; set; }
+        public int Port { get; set; }
+        
+        public IP() { }
+
+        public IP(string ip)
+        {
+            Port = Convert.ToInt32(ip.Split(':')[^1]);
+
+            Bytes = ip.Split(':')[0].Split('.').Select(@byte => Convert.ToInt32(@byte)).ToArray();
+        }
+
+        public static implicit operator string(IP ip)
+            => String.Join('.', ip.Bytes) + ":" + ip.Port;
+
+        public static implicit operator IP(string ip)
+            => new IP(ip);
+    }
 
     public class Program
     {
@@ -67,6 +88,8 @@ namespace YaNet.Samples
                 Console.WriteLine(String.Join(" ", data.Matrix[i]));
             }
 
+            Console.WriteLine(data.Ip);
+            
         }
     }
 }

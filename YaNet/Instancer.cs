@@ -30,8 +30,26 @@ namespace YaNet
                 "Boolean" => Convert.ToBoolean(value),
                 "Char" => Convert.ToChar(value),
                 "String" => value,
-                _ => Activator.CreateInstance(type)
+                _ => ImplicitConvert(type, value)
+                //_ => Activator.CreateInstance(type)
             };
+
+        private static object ImplicitConvert(Type type, string value)
+        {
+            MethodInfo method = type.GetMethod("op_Implicit", new[] { typeof(string) });
+
+            if (method == null)
+            {
+                //return Activator.CreateInstance(type);
+                throw new Exception($"Type {type.FullName} not support implicit method from string type.");
+            }
+
+            object obj = Activator.CreateInstance(type);
+
+            obj = method.Invoke(obj, new[] { value });
+
+            return obj;
+        }
 
         public static object Empty(Type type)
             => type.Name switch

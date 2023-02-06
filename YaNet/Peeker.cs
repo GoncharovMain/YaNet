@@ -39,7 +39,7 @@ namespace YaNet
 
         public Peeker(StringBuilder buffer, int start, int end)
         {
-            if (start > end)
+            if (start - 1 > end)
                 throw new Exception($"Start position [{start}] more than end position [{end}].");
 
             _buffer = buffer;
@@ -166,6 +166,11 @@ namespace YaNet
         {
             char space = ' ';
             char tab = '\t';
+
+            if (_end - _start == 0)
+            {
+                return true;
+            }
 
             for (int i = _start; i <= _end; i++)
             {

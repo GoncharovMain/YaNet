@@ -13,14 +13,13 @@ namespace YaNet.Nodes
 
         public void Init(ref object obj, StringBuilder buffer)
         {
-            Marker marker = new Marker(buffer);
-
             Type type = obj.GetType();
 
             if (type.IsGenericType)
             {
                 Type genericType = type.GetGenericTypeDefinition();
 
+                MethodInfo methodAdd = type.GetMethod("Add");
 
                 if (genericType == typeof(List<>))
                 {
@@ -32,7 +31,7 @@ namespace YaNet.Nodes
 
                         node.Init(ref item, buffer);
 
-                        type.GetMethod("Add").Invoke(obj, new[] { item });
+                        methodAdd.Invoke(obj, new[] { item });
                     }
 
                     return;
@@ -56,7 +55,7 @@ namespace YaNet.Nodes
 
                         object[] pair = (object[])parameters;
 
-                        obj.GetType().GetMethod("Add").Invoke(obj, pair);
+                        methodAdd.Invoke(obj, pair);
                     }
 
                     return;

@@ -5,6 +5,9 @@ namespace YaNet.Samples.Context
         public Person Person { get; set; }
         public IpAddress IpAddress { get; set; }
 
+        //public IP ip { get; set; }
+        public IP Ip { get; set; }
+
         //public int[][] Matrix { get; set; }
 
         public List<string> Matrices { get; set; }
@@ -64,6 +67,8 @@ namespace YaNet.Samples.Context
     {
         public string Ip { get; set; }
         public string Port { get; set; }
+
+        public string Full => $"{Ip}:{Port}";
         public Dictionary<string, bool> Protocol { get; set; }
     }
 }

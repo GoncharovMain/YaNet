@@ -1,20 +1,26 @@
-# this is comment. it is ignore row.
 Person:
 	PersonalData:
 		FirstName:  John
 		MiddleName: Mickel
 		LastName: Keyn
 		Age: 20
+#fdsfsd
 		Sex: Male
 	Address:
 		City: Moscow
 		Street: Red
 		Home: 3
-	VisitCountries:
+	VisitCountries:#fsdf
 		- Russia
 		- China
 		- USA
+	#ddsfgs
+
+
+
+
 	Friends:
+#gsfdhf
 		-
 			Id: 23
 			FirstName: Albert
@@ -54,7 +60,13 @@ Matrix:
 		- 0
 		- 0
 		- 1
+		- 5
 Matrices:
 	- "[1, 0, 0], [0, 1, 0], [0, 0, 1]"
 	- [5, 0, 0], [0, 7, 0], [0, 0, 5]
+
+
 Vector: 5, 4, 3, 7, 1, 0, 0, 1
+
+Ip: 255.255.0.101:8080
+
