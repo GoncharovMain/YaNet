@@ -4,8 +4,19 @@ namespace YaNet.Samples.Context
     {
         public Person Person { get; set; }
         public IpAddress IpAddress { get; set; }
+
         //public int[][] Matrix { get; set; }
+
         public List<string> Matrices { get; set; }
+        private List<int> vector { get; set; }
+        public string Vector
+        {
+            get => String.Join(", ", vector);
+            set => vector = value.Split(", ").Select(item => Convert.ToInt32(item)).ToList();
+        }
+
+        public List<int> GetVector() => vector;
+        public List<List<int>> Matrix { get; set; }
     }
 
     public class Person

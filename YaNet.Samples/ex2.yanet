@@ -1,0 +1,60 @@
+# this is comment. it is ignore row.
+Person:
+	PersonalData:
+		FirstName:  John
+		MiddleName: Mickel
+		LastName: Keyn
+		Age: 20
+		Sex: Male
+	Address:
+		City: Moscow
+		Street: Red
+		Home: 3
+	VisitCountries:
+		- Russia
+		- China
+		- USA
+	Friends:
+		-
+			Id: 23
+			FirstName: Albert
+			MiddleName: Allen
+			LastName: Bert
+		-
+			Id: 56
+			FirstName: Patrick
+			MiddleName: Cecil
+			LastName: Clarence
+		-
+			Id: 87
+			FirstName: Bob
+			MiddleName: Elliot
+			LastName: Elmer
+		-
+			Id: 101
+			FirstName: Ernie
+			MiddleName: Eugene
+			LastName: Fergus
+IpAddress:
+	Ip: 192.168.0.103
+	Port: 8080
+	Protocol:
+		tcp: true
+		udp: true
+Matrix:
+	-
+		- 1
+		- 0
+		- 0
+	-
+		- 0
+		- 1
+		- 0
+	-
+		- 0
+		- 0
+		- 1
+Matrices:
+	- "[1, 0, 0], [0, 1, 0], [0, 0, 1]"
+	- [5, 0, 0], [0, 7, 0], [0, 0, 5]
+Vector: 5, 4, 3, 7, 1, 0, 0, 1

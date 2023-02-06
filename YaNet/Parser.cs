@@ -22,6 +22,9 @@ namespace YaNet
 
             Definer definer = new Definer(_buffer, rows);
 
+            // ignore first comments
+            definer.Next();
+
             Collection collection = definer.DefineCollection();
 
             collection.Init(ref obj, _buffer);

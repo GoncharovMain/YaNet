@@ -53,7 +53,7 @@ namespace YaNet.Samples
         public static void Main()
         {
 
-            string path = Directory.GetCurrentDirectory() + "/ex2.yaml";
+            string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex2.yanet";
 
             string yaml = File.ReadAllText(path);
 
@@ -62,6 +62,10 @@ namespace YaNet.Samples
             Data data = deserializer.Deserialize<Data>();
 
 
+            for (int i = 0; i < data.Matrix.Count; i++)
+            {
+                Console.WriteLine(String.Join(" ", data.Matrix[i]));
+            }
 
         }
     }

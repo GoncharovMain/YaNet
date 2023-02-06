@@ -113,8 +113,8 @@ namespace YaNet
 
         public int IndexOf(char symbol)
         {
-            if (0 > _start || _start >= _length)
-                throw new Exception($"Start index[{_start}] is out of range buffer.");
+            //if (0 > _start || _start >= _length)
+            //    throw new Exception($"Start index[{_start}] is out of range buffer length {_length}. Row: '{Substring(_start, _end)}'.");
 
             for (int i = _start; i <= _end; i++)
             {
@@ -160,6 +160,22 @@ namespace YaNet
             }
 
             return -1;
+        }
+
+        public bool IsEmptyOrSpace()
+        {
+            char space = ' ';
+            char tab = '\t';
+
+            for (int i = _start; i <= _end; i++)
+            {
+                if (_buffer[i] != space || _buffer[i] != tab)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public bool Contains(char symbol)
