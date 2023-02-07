@@ -17,15 +17,16 @@ namespace YaNet
 
         public object Parse(object obj)
         {
-            Mark[] rows = new Peeker(_buffer).Split('\n');
+            //Mark[] rows = new Peeker(_buffer).Split('\n');
 
 
-            Definer definer = new Definer(_buffer, rows);
+            Qualifier qualifier = new Qualifier(_buffer);
+            //Definer definer = new Definer(_buffer, rows);
 
             // ignore first comments
-            definer.FirstNext();
+            //definer.FirstNext();
 
-            Collection collection = definer.DefineCollection();
+            Collection collection = qualifier.DefineCollection();
 
             collection.Init(ref obj, _buffer);
 

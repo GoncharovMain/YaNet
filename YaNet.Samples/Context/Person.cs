@@ -4,8 +4,6 @@ namespace YaNet.Samples.Context
     {
         public Person Person { get; set; }
         public IpAddress IpAddress { get; set; }
-
-        //public IP ip { get; set; }
         public IP Ip { get; set; }
 
         //public int[][] Matrix { get; set; }
@@ -17,8 +15,6 @@ namespace YaNet.Samples.Context
             get => String.Join(", ", vector);
             set => vector = value.Split(", ").Select(item => Convert.ToInt32(item)).ToList();
         }
-
-        public List<int> GetVector() => vector;
         public List<List<int>> Matrix { get; set; }
     }
 
@@ -31,7 +27,7 @@ namespace YaNet.Samples.Context
 
         public List<Friend> Friends { get; set; }
 
-        //public List<string> Languages { get; set; }
+        public List<string> Languages { get; set; }
     }
 
     public enum Sex

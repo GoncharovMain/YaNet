@@ -7,6 +7,8 @@ using YaNet.Nodes;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Data.Common;
+using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics.Contracts;
 
 namespace YaNet.Samples
 {
@@ -61,6 +63,18 @@ namespace YaNet.Samples
             => new IP(ip);
     }
 
+    public class QualifierBuilder
+    {
+        public char Indent = '\t';
+        public char Comment = '#';
+        public char DelimiterRow = '\n';
+        public QualifierBuilder()
+        {
+
+        }
+    }
+    
+
     public class Program
     {
         public static string CurrentDirectory => Directory.GetCurrentDirectory() + "/ex1.yaml";
@@ -68,8 +82,6 @@ namespace YaNet.Samples
         public static string YamlText => File.ReadAllText(CurrentDirectory);
 
         public static string[] YamlRows => File.ReadAllLines(CurrentDirectory);
-
-
 
         public static void Main()
         {
@@ -83,13 +95,6 @@ namespace YaNet.Samples
             Data data = deserializer.Deserialize<Data>();
 
 
-            for (int i = 0; i < data.Matrix.Count; i++)
-            {
-                Console.WriteLine(String.Join(" ", data.Matrix[i]));
-            }
-
-            Console.WriteLine(data.Ip);
-            
         }
     }
 }

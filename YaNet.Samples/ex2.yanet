@@ -1,26 +1,21 @@
 Person:
 	PersonalData:
-		FirstName:  John
+		FirstName: John
 		MiddleName: Mickel
 		LastName: Keyn
 		Age: 20
-#fdsfsd
-		Sex: Male
-	Address:
+		Sex: Male #fdsf
+
+	#comment 
+	Address:   # comment 123
 		City: Moscow
 		Street: Red
 		Home: 3
-	VisitCountries:#fsdf
+	VisitCountries:
 		- Russia
 		- China
 		- USA
-	#ddsfgs
-
-
-
-
-	Friends:
-#gsfdhf
+	Friends: ${Friends[0]}   
 		-
 			Id: 23
 			FirstName: Albert
@@ -41,6 +36,11 @@ Person:
 			FirstName: Ernie
 			MiddleName: Eugene
 			LastName: Fergus
+	Languages:
+		- English
+		- Russain
+		- Japanese
+		- Spanish
 IpAddress:
 	Ip: 192.168.0.103
 	Port: 8080
@@ -61,12 +61,11 @@ Matrix:
 		- 0
 		- 1
 		- 5
+
 Matrices:
 	- "[1, 0, 0], [0, 1, 0], [0, 0, 1]"
 	- [5, 0, 0], [0, 7, 0], [0, 0, 5]
 
-
 Vector: 5, 4, 3, 7, 1, 0, 0, 1
 
 Ip: 255.255.0.101:8080
-

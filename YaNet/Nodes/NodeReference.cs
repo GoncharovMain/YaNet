@@ -12,18 +12,7 @@ namespace YaNet.Nodes
 
         public new void Init(ref object obj, StringBuilder buffer)
         {
-            Marker marker = new Marker(buffer);
-
-            string key = marker.Buffer(Key);
-
-            PropertyInfo property = obj.GetType().GetProperty(key);
-
-
-            object inner = Activator.CreateInstance(obj.GetType());
-
-            property.SetValue(obj, inner);
-
-            Nodes.Init(ref inner, buffer);
+            base.Init(ref obj, buffer);
         }
 
         public static explicit operator NodeReference(Pair pair)

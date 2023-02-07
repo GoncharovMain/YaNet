@@ -13,18 +13,5 @@ namespace YaNet
 
         public string Buffer(Mark mark)
             => _buffer.ToString(mark.Start, mark.Length);
-
-        public int Count(char symbol, Mark mark)
-        {
-            int count = 0;
-
-            for (int i = mark.Start; i <= mark.End; i++)
-            {
-                if (_buffer[i] == symbol)
-                    count++;
-            }
-
-            return count;
-        }
     }
 }
