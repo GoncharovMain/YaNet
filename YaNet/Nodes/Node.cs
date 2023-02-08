@@ -38,9 +38,28 @@ namespace YaNet.Nodes
 
             if (property.PropertyType.IsArray)
             {
-                int length = ((Collection)Nodes).Nodes.Length;
+                int rankArray = property.PropertyType.GetArrayRank();
+                
+                if (rankArray == 1)
+                {
+                    int length = ((Collection)Nodes).Nodes.Length;
 
-                value = Activator.CreateInstance(property.PropertyType, length);
+                    value = Activator.CreateInstance(property.PropertyType, length);
+                }
+                else
+                {
+                    INode[] nodes = ((Collection)Nodes).Nodes;
+
+
+
+                    for (int i = 0; i < nodes.Length; i++)
+                    {
+                        .InnerCollection()
+                    }
+
+                    value = Activator.CreateInstance(property.PropertyType, new int[] { });
+                    
+                }
             }
             else
             {

@@ -1,3 +1,4 @@
+using System;
 using System.Xml.Linq;
 
 namespace YaNet.Nodes
@@ -5,6 +6,8 @@ namespace YaNet.Nodes
     public class Collection : INode
     {
         public INode[] Nodes { get; set; }
+
+        
 
         public Collection(params INode[] nodes)
         {
@@ -66,6 +69,7 @@ namespace YaNet.Nodes
 
             if (type.IsArray)
             {
+                
                 #region types arrays
                 // Stepped arrays.
                 // use GetType() and GetElementType()
@@ -95,7 +99,7 @@ namespace YaNet.Nodes
                     for (int i = 0; i < array.Length; i++)
                     {
                         // bad code !!!
-                        int length = ((Collection)(((Item)Nodes[i]).Node)).Nodes.Length;
+                        int length = InnerCollection(Nodes[i]).Length;
 
                         object element = Activator.CreateInstance(elementType, length);
 
@@ -124,6 +128,9 @@ namespace YaNet.Nodes
                 Nodes[i].Init(ref obj, buffer);
             }
         }
+
+        public INode[] InnerCollection(INode node) => ((Collection)(((Item)node).Node)).Nodes;
+        public INode[] InnerCollection(int index) => ((Collection)(((Item)Nodes[index]).Node)).Nodes;
 
         public void Print(StringBuilder buffer)
         {
