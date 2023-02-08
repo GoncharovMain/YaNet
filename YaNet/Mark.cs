@@ -1,5 +1,3 @@
-using YaNet.Features;
-
 namespace YaNet
 {
     public struct Mark

@@ -5,9 +5,6 @@ namespace YaNet.Samples.Context
         public Person Person { get; set; }
         public IpAddress IpAddress { get; set; }
         public IP Ip { get; set; }
-
-        //public int[][] Matrix { get; set; }
-
         public List<string> Matrices { get; set; }
         private List<int> vector { get; set; }
         public string Vector
@@ -16,6 +13,7 @@ namespace YaNet.Samples.Context
             set => vector = value.Split(", ").Select(item => Convert.ToInt32(item)).ToList();
         }
         public List<List<int>> Matrix { get; set; }
+        public int[][] SteppedArray { get; set; }
     }
 
     public class Person
@@ -66,5 +64,26 @@ namespace YaNet.Samples.Context
 
         public string Full => $"{Ip}:{Port}";
         public Dictionary<string, bool> Protocol { get; set; }
+    }
+
+    public class IP
+    {
+        public int[] Bytes { get; set; }
+        public int Port { get; set; }
+
+        public IP() { }
+
+        public IP(string ip)
+        {
+            Port = Convert.ToInt32(ip.Split(':')[^1]);
+
+            Bytes = ip.Split(':')[0].Split('.').Select(@byte => Convert.ToInt32(@byte)).ToArray();
+        }
+
+        public static implicit operator string(IP ip)
+            => String.Join('.', ip.Bytes) + ":" + ip.Port;
+
+        public static implicit operator IP(string ip)
+            => new IP(ip);
     }
 }

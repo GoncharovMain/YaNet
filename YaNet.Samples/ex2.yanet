@@ -17,7 +17,7 @@ Person:
 		- USA
 	Friends: ${Friends[0]}   
 		-
-			Id: 23
+			Id: 23  
 			FirstName: Albert
 			MiddleName: Allen
 			LastName: Bert
@@ -69,3 +69,14 @@ Matrices:
 Vector: 5, 4, 3, 7, 1, 0, 0, 1
 
 Ip: 255.255.0.101:8080
+
+SteppedArray:
+	-
+		- 5645
+		- -2454
+		- 4536
+		- 7623
+	-
+		- -4
+		- 43
+		- 90009

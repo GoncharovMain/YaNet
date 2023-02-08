@@ -73,8 +73,6 @@ namespace YaNet
             _indents[^1] = Indent(_marks[^1]);
         }
 
-        public Mark this[int index] => _marks[index];
-
         public Pair ToPair()
         {
             int delimiterPosition = CurrentIndexOf(_pairDelimiter);
@@ -242,10 +240,12 @@ namespace YaNet
                 return true;
             }
 
+            // move to SplitWithIndents
             TrimRight();
 
             return false;
         }
+
         public bool IsEmptyOrSpace(Mark mark)
         {
             char space = ' ', tab = '\t';
@@ -395,9 +395,9 @@ namespace YaNet
 
             bool isEqual = true;
 
-            int maxLength = _currentMark.End - substring.Length;
+            int maxLength = mark.End - substring.Length;
 
-            for (int i = _currentMark.Start; i <= maxLength; i++)
+            for (int i = mark.Start; i <= maxLength; i++)
             {
                 for (int j = 0; j < substring.Length; j++, i++)
                 {

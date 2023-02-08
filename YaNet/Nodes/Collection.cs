@@ -64,6 +64,61 @@ namespace YaNet.Nodes
                 throw new Exception($"Not support generic type: '{genericType.Name}'.");
             }
 
+            if (type.IsArray)
+            {
+                #region types arrays
+                // Stepped arrays.
+                // use GetType() and GetElementType()
+                // array = int[][][]
+                // array.GetType() => int[][][]
+                // array.GetType().GetElementType() => int[][]
+                // array.GetType().GetElementType().GetElementType() => int[]
+                // CreateInstance(Type, Int32[], Int32[])
+
+                // Multidimensional arrays. 
+                // use Rank
+                // Rank for int[] => 1
+                // Rank for int[,] => 2
+                // Rank for int[,,] => 3
+                // Rank for int[,,,] => 4
+                // CreateInstance(Type, Int32[])
+
+                #endregion types arrays
+
+                // For stepped array.
+                Type elementType = type.GetElementType();
+
+                Array array = (Array)obj;
+                
+                if (elementType.IsArray)
+                {
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        // bad code !!!
+                        int length = ((Collection)(((Item)Nodes[i]).Node)).Nodes.Length;
+
+                        object element = Activator.CreateInstance(elementType, length);
+
+                        Nodes[i].Init(ref element, buffer);
+
+                        array.SetValue(element, i);
+                    }
+
+                    return;
+                }
+
+                for (int i = 0; i < Nodes.Length; i++)
+                {
+                    object element = Instancer.Empty(elementType);
+
+                    Nodes[i].Init(ref element, buffer);
+
+                    array.SetValue(element, i);
+                }
+
+                return;
+            }
+
             for (int i = 0; i < Nodes.Length; i++)
             {
                 Nodes[i].Init(ref obj, buffer);

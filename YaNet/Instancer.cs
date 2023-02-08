@@ -44,11 +44,12 @@ namespace YaNet
                 throw new Exception($"Type {type.FullName} not support implicit method from string type.");
             }
 
-            object obj = Activator.CreateInstance(type);
+            return method.Invoke(Activator.CreateInstance(type), new[] { value });
+        }
 
-            obj = method.Invoke(obj, new[] { value });
-
-            return obj;
+        public static object CreateArray(Type type)
+        {
+            return Activator.CreateInstance(type);
         }
 
         public static object Empty(Type type)

@@ -10,14 +10,17 @@ namespace YaNet.Nodes
             Key = key;
             Nodes = nodes;
         }
+
         public void Init(ref object obj, StringBuilder buffer)
         {
             Marker marker = new Marker(buffer);
 
             string propertyName = marker.Buffer(Key);
 
+            Type type = obj.GetType();
+
             // for dictionary
-            if (obj.GetType() == typeof(object[]))
+            if (type == typeof(object[]))
             {
                 var pair = (object[])obj;
 
@@ -28,9 +31,22 @@ namespace YaNet.Nodes
                 return;
             }
 
-            PropertyInfo property = obj.GetType().GetProperty(propertyName);
 
-            object value = Instancer.Empty(property.PropertyType);
+            PropertyInfo property = type.GetProperty(propertyName);
+
+            object value;
+
+            if (property.PropertyType.IsArray)
+            {
+                int length = ((Collection)Nodes).Nodes.Length;
+
+                value = Activator.CreateInstance(property.PropertyType, length);
+            }
+            else
+            {
+                value = Instancer.Empty(property.PropertyType);
+            }
+
 
             Nodes.Init(ref value, buffer);
 
