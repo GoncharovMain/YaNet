@@ -7,7 +7,7 @@ namespace YaNet.Nodes
     {
         public INode[] Nodes { get; set; }
 
-        
+        public int Length => Nodes.Length;
 
         public Collection(params INode[] nodes)
         {
@@ -91,26 +91,55 @@ namespace YaNet.Nodes
 
                 // For stepped array.
                 Type elementType = type.GetElementType();
-
-                Array array = (Array)obj;
                 
-                if (elementType.IsArray)
+                Array array = (Array)obj;
+
+                int rank = array.Rank;
+
+                int[] position = new int[rank];
+
+
+                for (int numberRank = 0; numberRank < rank; numberRank++)
                 {
-                    for (int i = 0; i < array.Length; i++)
+                    Collection current = ((Nodes[numberRank] as Item).Node as Collection);
+
+                    int length = current.Length;
+
+                    for (int indexRank = 0; indexRank < array.GetLength(numberRank); indexRank++)
                     {
-                        // bad code !!!
-                        int length = InnerCollection(Nodes[i]).Length;
+                        for (int i = 0; i < array.GetLength(numberRank); i++)
+                        {
 
-                        object element = Activator.CreateInstance(elementType, length);
+                        }
 
-                        Nodes[i].Init(ref element, buffer);
+                        position[numberRank] = indexRank;
 
-                        array.SetValue(element, i);
+                        if (elementType.IsArray)
+                        {
+
+
+                            int elementRank = elementType.GetArrayRank();
+
+
+                            for (int i = 0; i < array.Length; i++)
+                            {
+
+                                // bad code !!!
+                                int length0 = InnerCollection(Nodes[i]).Length;
+
+                                object element = Activator.CreateInstance(elementType, length0);
+
+                                Nodes[i].Init(ref element, buffer);
+
+                                array.SetValue(element, i);
+                            }
+
+                            return;
+                        }
                     }
-
-                    return;
                 }
 
+                // move to rank init
                 for (int i = 0; i < Nodes.Length; i++)
                 {
                     object element = Instancer.Empty(elementType);
@@ -119,6 +148,31 @@ namespace YaNet.Nodes
 
                     array.SetValue(element, i);
                 }
+                
+          
+                //int[] position = new int[rank];
+
+                //// inner collection.items[0]
+                //// взять узел на глубину rank?
+
+                //INode current = Nodes[0];
+    
+                //for (int numberRank = 0; numberRank < rank; numberRank++)
+                //{
+                //    current = ((current as Item).Node as Collection);
+
+
+                //    for (int i = 0; i < array.GetLength(numberRank); i++)
+                //    {
+                //        position[numberRank] = i;
+
+                //        object item = Instancer.Empty(elementType);
+
+                //        current.Init(ref item, buffer);
+
+                //        array.SetValue(item, position);
+                //    }
+                //}
 
                 return;
             }

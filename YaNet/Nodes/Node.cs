@@ -33,37 +33,34 @@ namespace YaNet.Nodes
 
 
             PropertyInfo property = type.GetProperty(propertyName);
+            Type propertyType = property.PropertyType;
 
             object value;
 
-            if (property.PropertyType.IsArray)
+            if (propertyType.IsArray)
             {
-                int rankArray = property.PropertyType.GetArrayRank();
-                
-                if (rankArray == 1)
-                {
-                    int length = ((Collection)Nodes).Nodes.Length;
+                int rankArray = propertyType.GetArrayRank();
+                Type elementType = propertyType.GetElementType();
 
-                    value = Activator.CreateInstance(property.PropertyType, length);
-                }
-                else
-                {
-                    INode[] nodes = ((Collection)Nodes).Nodes;
+                Collection current = Nodes as Collection;
 
-
-
-                    for (int i = 0; i < nodes.Length; i++)
-                    {
-                        .InnerCollection()
-                    }
-
-                    value = Activator.CreateInstance(property.PropertyType, new int[] { });
+                int[] ranks = new int[rankArray];
+                int numberRank = 0;
                     
+                ranks[numberRank] = current.Length;
+
+                for (numberRank++; numberRank < rankArray; numberRank++)
+                {
+                    current = (current.Nodes[0] as Item).Node as Collection;
+
+                    ranks[numberRank] = current.Length;
                 }
+
+                value = Array.CreateInstance(elementType, ranks);
             }
             else
             {
-                value = Instancer.Empty(property.PropertyType);
+                value = Instancer.Empty(propertyType);
             }
 
 
@@ -71,6 +68,8 @@ namespace YaNet.Nodes
 
             property.SetValue(obj, value);
         }
+
+        
 
         public virtual void Print(StringBuilder buffer)
         {

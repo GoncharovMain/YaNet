@@ -13,13 +13,30 @@ namespace YaNet.Samples
         public static void Main()
         {
             //string path = Directory.GetCurrentDirectory() + "/ex2.yanet";
-            string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex2.yanet";
+            string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex3.yaml";
 
             string yaml = File.ReadAllText(path);
 
-            Deserializer deserializer = new Deserializer(yaml);
+            //Deserializer deserializer = new Deserializer(yaml);
 
-            Data data = deserializer.Deserialize<Data>();
+            //Data data = deserializer.Deserialize<Data>();
+
+            //Array array = new int[,,][][,][][][,,,] { };
+
+            Array array = new int[,]
+            {
+                { 85, 84, 20, -1 },
+                { 75, 74, 10, -11 }
+            };
+
+
+            System.Collections.IEnumerator myEnumerator = array.GetEnumerator();
+            
+            int i = 0;
+
+            while ((myEnumerator.MoveNext()) && (myEnumerator.Current != null))
+                Console.WriteLine("[{0}] {1}", i++, myEnumerator.Current);
+
         }
     }
 }
