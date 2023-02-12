@@ -69,7 +69,7 @@ namespace YaNet.Nodes
 
             if (type.IsArray)
             {
-                
+
                 #region types arrays
                 // Stepped arrays.
                 // use GetType() and GetElementType()
@@ -79,7 +79,7 @@ namespace YaNet.Nodes
                 // array.GetType().GetElementType().GetElementType() => int[]
                 // CreateInstance(Type, Int32[], Int32[])
 
-                // Multidimensional arrays. 
+                // Multidimensional arrays.
                 // use Rank
                 // Rank for int[] => 1
                 // Rank for int[,] => 2
@@ -91,53 +91,53 @@ namespace YaNet.Nodes
 
                 // For stepped array.
                 Type elementType = type.GetElementType();
-                
+
                 Array array = (Array)obj;
+
+                RankPosition rp = (int[])array;
+
+
+                // calc rank for inner element (elementType)
 
                 int rank = array.Rank;
 
-                int[] position = new int[rank];
-
+                int[] maxRanks = new int[rank];
 
                 for (int numberRank = 0; numberRank < rank; numberRank++)
                 {
                     Collection current = ((Nodes[numberRank] as Item).Node as Collection);
 
-                    int length = current.Length;
-
-                    for (int indexRank = 0; indexRank < array.GetLength(numberRank); indexRank++)
-                    {
-                        for (int i = 0; i < array.GetLength(numberRank); i++)
-                        {
-
-                        }
-
-                        position[numberRank] = indexRank;
-
-                        if (elementType.IsArray)
-                        {
-
-
-                            int elementRank = elementType.GetArrayRank();
-
-
-                            for (int i = 0; i < array.Length; i++)
-                            {
-
-                                // bad code !!!
-                                int length0 = InnerCollection(Nodes[i]).Length;
-
-                                object element = Activator.CreateInstance(elementType, length0);
-
-                                Nodes[i].Init(ref element, buffer);
-
-                                array.SetValue(element, i);
-                            }
-
-                            return;
-                        }
-                    }
+                    maxRanks[numberRank] = current.Length;
                 }
+
+                RankPosition rankPosition = new RankPosition(maxRanks);
+
+
+
+
+                do
+                {
+                    Collection current = this;
+
+                    object element = Instancer.Empty(elementType);
+
+                    for (int numberRank = 0; numberRank < rank; numberRank++)
+                    {
+                        current = ((current.Nodes[numberRank] as Item).Node as Collection);
+                    }
+                    Console.WriteLine(rankPosition);
+
+                    current.Nodes[rankPosition.Last].Init(ref element, buffer);
+
+
+                } while (rankPosition.MoveNext());
+
+
+
+
+
+
+
 
                 // move to rank init
                 for (int i = 0; i < Nodes.Length; i++)
@@ -148,31 +148,6 @@ namespace YaNet.Nodes
 
                     array.SetValue(element, i);
                 }
-                
-          
-                //int[] position = new int[rank];
-
-                //// inner collection.items[0]
-                //// взять узел на глубину rank?
-
-                //INode current = Nodes[0];
-    
-                //for (int numberRank = 0; numberRank < rank; numberRank++)
-                //{
-                //    current = ((current as Item).Node as Collection);
-
-
-                //    for (int i = 0; i < array.GetLength(numberRank); i++)
-                //    {
-                //        position[numberRank] = i;
-
-                //        object item = Instancer.Empty(elementType);
-
-                //        current.Init(ref item, buffer);
-
-                //        array.SetValue(item, position);
-                //    }
-                //}
 
                 return;
             }
