@@ -7,10 +7,7 @@ namespace YaNet
         private int _currentRank;
 
         public int Length => _rankLengths.Length;
-        public int First => _currentPosition[0];
         public int Last => _currentPosition[_currentRank];
-
-        private int _taller => _currentPosition[_currentRank + 1];
 
         public RankPosition(params int[] rankLengths)
         {
@@ -93,13 +90,8 @@ namespace YaNet
 
         public static bool operator !=(RankPosition left, RankPosition right) => !(left == right);
 
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
+        public override bool Equals(object obj) => base.Equals(obj);
+        
+        public override int GetHashCode() => ToString().GetHashCode();
     }
 }

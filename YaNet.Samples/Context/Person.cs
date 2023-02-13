@@ -2,18 +2,18 @@ namespace YaNet.Samples.Context
 {
     public class Data
     {
-        //public Person Person { get; set; }
-        //public IpAddress IpAddress { get; set; }
-        //public IP Ip { get; set; }
-        //public List<string> Matrices { get; set; }
-        //private List<int> vector { get; set; }
-        //public string Vector
-        //{
-        //    get => String.Join(", ", vector);
-        //    set => vector = value.Split(", ").Select(item => Convert.ToInt32(item)).ToList();
-        //}
-        //public List<List<int>> Matrix { get; set; }
-        //public int[][] SteppedArray { get; set; }
+        public Person Person { get; set; }
+        public IpAddress IpAddress { get; set; }
+        public IP Ip { get; set; }
+        public List<string> Matrices { get; set; }
+        private List<int> vector { get; set; }
+        public string Vector
+        {
+            get => String.Join(", ", vector);
+            set => vector = value.Split(", ").Select(item => Convert.ToInt32(item)).ToList();
+        }
+        public List<List<int>> Matrix { get; set; }
+        public int[][] SteppedArray { get; set; }
         public int[,][] MultiArray { get; set; }
     }
 

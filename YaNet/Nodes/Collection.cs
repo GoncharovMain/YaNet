@@ -1,7 +1,3 @@
-using System;
-using System.ComponentModel;
-using System.Xml.Linq;
-
 namespace YaNet.Nodes
 {
     public class Collection : INode
@@ -83,6 +79,8 @@ namespace YaNet.Nodes
                 {
                     do
                     {
+                        #region get rank for stepped array
+
                         Collection current = this;
 
                         for (int i = 0; i < rankPosition.Length; i++)
@@ -104,6 +102,8 @@ namespace YaNet.Nodes
 
                             innerRanks[innerNumberRank] = current.Length;
                         }
+
+                        #endregion get rank for inner array
 
                         Collection innerCurrent = this;
 

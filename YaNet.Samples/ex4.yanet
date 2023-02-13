@@ -7,16 +7,16 @@ Requests:
 		Url: https://google.com/
 		Headers:
 			Host: google.com
-			User-Agent: Mozilla/5.0
-			Referer: https://google.com/
+			UserAgent: Mozilla/5.0
+			Referrer: https://google.com/
 
 	GooglePost: <GetRequest>
 		Method: POST
 		Url: https://google.com/
 		Headers:
 			Host: google.com
-			User-Agent: Mozilla/5.0
-			Referer: https://google.com/
+			UserAgent: Mozilla/5.0
+			Referrer: https://google.com/
 			Origin: https://google.com
 		MimeType: application/x-www-form-urlencoded; charset=UTF-8
 		Body:

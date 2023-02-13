@@ -1,4 +1,15 @@
+```
+Supported data structures:
+	Any int: byte, short
 
+	Dictionary
+	List, List of List
+	Array: Stepped, Multidimensionaly
+
+Not supported:
+	references (NodeReference)
+	enums
+```
 
 ```
 valid("a: v1\n", "scalar")

@@ -13,13 +13,15 @@ namespace YaNet.Samples
         public static void Main()
         {
             //string path = Directory.GetCurrentDirectory() + "/ex2.yanet";
-            string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex3.yaml";
+            string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex4.yanet";
 
             string yaml = File.ReadAllText(path);
 
             Deserializer deserializer = new Deserializer(yaml);
 
-            Data data = deserializer.Deserialize<Data>();
+            RequestData data = deserializer.Deserialize<RequestData>();
+
+            //Data data = deserializer.Deserialize<Data>();
         }
     }
 }
