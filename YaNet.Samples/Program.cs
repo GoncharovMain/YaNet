@@ -12,8 +12,8 @@ namespace YaNet.Samples
 
         public static void Main()
         {
-            string path = Directory.GetCurrentDirectory() + "/ex2.yanet";
-            //string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex3.yaml";
+            //string path = Directory.GetCurrentDirectory() + "/ex2.yanet";
+            string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex3.yaml";
 
             string yaml = File.ReadAllText(path);
 
@@ -39,14 +39,14 @@ namespace YaNet.Samples
 
 
 
-            // Console.WriteLine($"3, 4, 2");
+            //Console.WriteLine($"3, 4, 2");
 
-            // RankPosition rankPosition = new RankPosition(3, 4, 5);
+            //RankPosition rankPosition = new RankPosition(3, 4, 5);
 
-            // do
-            // {
-            //     Console.WriteLine(rankPosition);
-            // } while (rankPosition.MoveNext());
+            //do
+            //{
+            //    Console.WriteLine(rankPosition);
+            //} while (rankPosition.MoveNext());
 
         }
     }

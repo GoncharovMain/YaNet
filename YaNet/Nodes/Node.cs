@@ -39,6 +39,8 @@ namespace YaNet.Nodes
 
             if (propertyType.IsArray)
             {
+                // repeat code in file Collection.cs
+
                 int rankArray = propertyType.GetArrayRank();
                 Type elementType = propertyType.GetElementType();
 

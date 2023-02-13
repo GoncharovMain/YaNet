@@ -7,6 +7,7 @@ namespace YaNet
         private int _currentRank;
 
         public int Length => _rankLengths.Length;
+        public int First => _currentPosition[0];
         public int Last => _currentPosition[_currentRank];
 
         private int _taller => _currentPosition[_currentRank + 1];
@@ -29,7 +30,7 @@ namespace YaNet
 
         public bool MoveNext()
         {
-            if (_currentPosition[_currentRank] + 1 > _rankLengths[_currentRank])
+            if (_currentPosition[_currentRank] + 1 >= _rankLengths[_currentRank])
             {
                 if (_currentRank - 1 < 0)
                 {
@@ -52,6 +53,18 @@ namespace YaNet
         public void Reset()
         {
             _currentPosition = new int[_rankLengths.Length];
+        }
+
+        public static int[] GetMaxRanks(Array array)
+        {
+            int[] maxRanks = new int[array.Rank];
+
+            for (int i = 0; i < array.Rank; i++)
+            {
+                maxRanks[i] = array.GetLength(i);
+            }
+
+            return maxRanks;
         }
 
         public static implicit operator RankPosition(int[] rank) => new RankPosition(rank);
@@ -86,7 +99,7 @@ namespace YaNet
         }
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return ToString().GetHashCode();
         }
     }
 }

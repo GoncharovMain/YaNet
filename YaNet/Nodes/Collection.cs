@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Xml.Linq;
 
 namespace YaNet.Nodes
@@ -69,85 +70,78 @@ namespace YaNet.Nodes
 
             if (type.IsArray)
             {
-
-                #region types arrays
-                // Stepped arrays.
-                // use GetType() and GetElementType()
-                // array = int[][][]
-                // array.GetType() => int[][][]
-                // array.GetType().GetElementType() => int[][]
-                // array.GetType().GetElementType().GetElementType() => int[]
-                // CreateInstance(Type, Int32[], Int32[])
-
-                // Multidimensional arrays.
-                // use Rank
-                // Rank for int[] => 1
-                // Rank for int[,] => 2
-                // Rank for int[,,] => 3
-                // Rank for int[,,,] => 4
-                // CreateInstance(Type, Int32[])
-
-                #endregion types arrays
-
-                // For stepped array.
-                Type elementType = type.GetElementType();
-
                 Array array = (Array)obj;
 
-                RankPosition rp = (int[])array;
+                Type elementType = type.GetElementType();
+
+                int[] maxRanksUp = RankPosition.GetMaxRanks(array);
+
+                RankPosition rankPositionUp = new RankPosition(maxRanksUp);
 
 
-                // calc rank for inner element (elementType)
-
-                int rank = array.Rank;
-
-                int[] maxRanks = new int[rank];
-
-                for (int numberRank = 0; numberRank < rank; numberRank++)
+                if (elementType.IsArray)
                 {
-                    Collection current = ((Nodes[numberRank] as Item).Node as Collection);
+                    int rankInnerArray = elementType.GetArrayRank();
 
-                    maxRanks[numberRank] = current.Length;
+                    Collection innerCurrent = this;
+
+                    for (int i = 0; i < rankPositionUp.Length; i++)
+                    {
+                        innerCurrent = (innerCurrent.Nodes[0] as Item).Node as Collection;
+                    }
+
+
+                    int[] ranks = new int[rankInnerArray];
+
+                    int innerNumberRank = 0;
+
+                    ranks[innerNumberRank] = innerCurrent.Length;
+
+                    for (innerNumberRank++; innerNumberRank < rankInnerArray; innerNumberRank++)
+                    {
+                        innerCurrent = (innerCurrent.Nodes[0] as Item).Node as Collection;
+
+                        ranks[innerNumberRank] = innerCurrent.Length;
+                    }
+
+
+                    do
+                    {
+                        Collection current = this;
+
+                        for (int numberRank = 0; numberRank < array.Rank - 1; numberRank++)
+                        {
+                            current = (current.Nodes[rankPositionUp[numberRank]] as Item).Node as Collection;
+                        }
+
+                        object element = Array.CreateInstance(elementType.GetElementType(), ranks);
+
+                        current.Nodes[rankPositionUp.Last].Init(ref element, buffer);
+
+
+                        array.SetValue(element, rankPositionUp);
+
+                    } while (rankPositionUp.MoveNext());
+
+                    return;
                 }
-
-                RankPosition rankPosition = new RankPosition(maxRanks);
-
-
-
 
                 do
                 {
                     Collection current = this;
 
-                    object element = Instancer.Empty(elementType);
-
-                    for (int numberRank = 0; numberRank < rank; numberRank++)
+                    for (int numberRank = 0; numberRank < array.Rank - 1; numberRank++)
                     {
-                        current = ((current.Nodes[numberRank] as Item).Node as Collection);
+                        current = (current.Nodes[rankPositionUp[numberRank]] as Item).Node as Collection;
                     }
-                    Console.WriteLine(rankPosition);
 
-                    current.Nodes[rankPosition.Last].Init(ref element, buffer);
-
-
-                } while (rankPosition.MoveNext());
-
-
-
-
-
-
-
-
-                // move to rank init
-                for (int i = 0; i < Nodes.Length; i++)
-                {
                     object element = Instancer.Empty(elementType);
 
-                    Nodes[i].Init(ref element, buffer);
+                    current.Nodes[rankPositionUp.Last].Init(ref element, buffer);
 
-                    array.SetValue(element, i);
-                }
+                    array.SetValue(element, rankPositionUp);
+
+                } while (rankPositionUp.MoveNext());
 
                 return;
             }
