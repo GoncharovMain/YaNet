@@ -81,43 +81,42 @@ namespace YaNet.Nodes
 
                 if (elementType.IsArray)
                 {
-                    int rankInnerArray = elementType.GetArrayRank();
-
-                    Collection innerCurrent = this;
-
-                    for (int i = 0; i < rankPositionUp.Length; i++)
-                    {
-                        innerCurrent = (innerCurrent.Nodes[0] as Item).Node as Collection;
-                    }
-
-
-                    int[] ranks = new int[rankInnerArray];
-
-                    int innerNumberRank = 0;
-
-                    ranks[innerNumberRank] = innerCurrent.Length;
-
-                    for (innerNumberRank++; innerNumberRank < rankInnerArray; innerNumberRank++)
-                    {
-                        innerCurrent = (innerCurrent.Nodes[0] as Item).Node as Collection;
-
-                        ranks[innerNumberRank] = innerCurrent.Length;
-                    }
-
-
                     do
                     {
                         Collection current = this;
 
-                        for (int numberRank = 0; numberRank < array.Rank - 1; numberRank++)
+                        for (int i = 0; i < rankPositionUp.Length; i++)
                         {
-                            current = (current.Nodes[rankPositionUp[numberRank]] as Item).Node as Collection;
+                            current = (current.Nodes[rankPositionUp[i]] as Item).Node as Collection;
                         }
 
+                        int rankInnerArray = elementType.GetArrayRank();
+
+                        int[] ranks = new int[rankInnerArray];
+
+                        int innerNumberRank = 0;
+
+                        ranks[innerNumberRank] = current.Length;
+
+                        for (innerNumberRank++; innerNumberRank < rankInnerArray; innerNumberRank++)
+                        {
+                            current = (current.Nodes[rankPositionUp.Last] as Item).Node as Collection;
+
+                            ranks[innerNumberRank] = current.Length;
+                        }
+
+
+                        Collection innerCurrent = this;
+
+                        for (int numberRank = 0; numberRank < array.Rank - 1; numberRank++)
+                        {
+                            innerCurrent = (innerCurrent.Nodes[rankPositionUp[numberRank]] as Item).Node as Collection;
+                        }
+
+                        // every ranks get new from rankPositionUp
                         object element = Array.CreateInstance(elementType.GetElementType(), ranks);
 
-                        current.Nodes[rankPositionUp.Last].Init(ref element, buffer);
-
+                        innerCurrent.Nodes[rankPositionUp.Last].Init(ref element, buffer);
 
                         array.SetValue(element, rankPositionUp);
 

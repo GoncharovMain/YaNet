@@ -14,7 +14,7 @@ namespace YaNet.Samples.Context
         //}
         //public List<List<int>> Matrix { get; set; }
         //public int[][] SteppedArray { get; set; }
-        public int[][] MultiArray { get; set; }
+        public int[,][] MultiArray { get; set; }
     }
 
     public class Person
