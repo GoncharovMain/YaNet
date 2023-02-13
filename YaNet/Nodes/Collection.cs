@@ -74,9 +74,9 @@ namespace YaNet.Nodes
 
                 Type elementType = type.GetElementType();
 
-                int[] maxRanksUp = RankPosition.GetMaxRanks(array);
+                int[] maxRanks = RankPosition.GetMaxRanks(array);
 
-                RankPosition rankPositionUp = new RankPosition(maxRanksUp);
+                RankPosition rankPosition = new RankPosition(maxRanks);
 
 
                 if (elementType.IsArray)
@@ -85,42 +85,40 @@ namespace YaNet.Nodes
                     {
                         Collection current = this;
 
-                        for (int i = 0; i < rankPositionUp.Length; i++)
+                        for (int i = 0; i < rankPosition.Length; i++)
                         {
-                            current = (current.Nodes[rankPositionUp[i]] as Item).Node as Collection;
+                            current = (current.Nodes[rankPosition[i]] as Item).Node as Collection;
                         }
 
                         int rankInnerArray = elementType.GetArrayRank();
 
-                        int[] ranks = new int[rankInnerArray];
+                        int[] innerRanks = new int[rankInnerArray];
 
                         int innerNumberRank = 0;
 
-                        ranks[innerNumberRank] = current.Length;
+                        innerRanks[innerNumberRank] = current.Length;
 
                         for (innerNumberRank++; innerNumberRank < rankInnerArray; innerNumberRank++)
                         {
-                            current = (current.Nodes[rankPositionUp.Last] as Item).Node as Collection;
+                            current = (current.Nodes[innerNumberRank] as Item).Node as Collection;
 
-                            ranks[innerNumberRank] = current.Length;
+                            innerRanks[innerNumberRank] = current.Length;
                         }
-
 
                         Collection innerCurrent = this;
 
                         for (int numberRank = 0; numberRank < array.Rank - 1; numberRank++)
                         {
-                            innerCurrent = (innerCurrent.Nodes[rankPositionUp[numberRank]] as Item).Node as Collection;
+                            innerCurrent = (innerCurrent.Nodes[rankPosition[numberRank]] as Item).Node as Collection;
                         }
 
-                        // every ranks get new from rankPositionUp
-                        object element = Array.CreateInstance(elementType.GetElementType(), ranks);
+                        object element = Array.CreateInstance(elementType.GetElementType(), innerRanks);
 
-                        innerCurrent.Nodes[rankPositionUp.Last].Init(ref element, buffer);
+                        innerCurrent.Nodes[rankPosition.Last].Init(ref element, buffer);
 
-                        array.SetValue(element, rankPositionUp);
+                        array.SetValue(element, rankPosition);
 
-                    } while (rankPositionUp.MoveNext());
+                    } while (rankPosition.MoveNext());
 
                     return;
                 }
@@ -131,16 +129,16 @@ namespace YaNet.Nodes
 
                     for (int numberRank = 0; numberRank < array.Rank - 1; numberRank++)
                     {
-                        current = (current.Nodes[rankPositionUp[numberRank]] as Item).Node as Collection;
+                        current = (current.Nodes[rankPosition[numberRank]] as Item).Node as Collection;
                     }
 
                     object element = Instancer.Empty(elementType);
 
-                    current.Nodes[rankPositionUp.Last].Init(ref element, buffer);
+                    current.Nodes[rankPosition.Last].Init(ref element, buffer);
 
-                    array.SetValue(element, rankPositionUp);
+                    array.SetValue(element, rankPosition);
 
-                } while (rankPositionUp.MoveNext());
+                } while (rankPosition.MoveNext());
 
                 return;
             }
@@ -150,9 +148,6 @@ namespace YaNet.Nodes
                 Nodes[i].Init(ref obj, buffer);
             }
         }
-
-        public INode[] InnerCollection(INode node) => ((Collection)(((Item)node).Node)).Nodes;
-        public INode[] InnerCollection(int index) => ((Collection)(((Item)Nodes[index]).Node)).Nodes;
 
         public void Print(StringBuilder buffer)
         {
