@@ -35,11 +35,16 @@ namespace YaNet
 
         private char _commentSymbol = '#';
 
+        private string _startReference = "${";
+        private char _endReference = '}';
+
         public Qualifier(StringBuilder buffer)
         {
             _buffer = buffer;
 
             SplitWithIndents();
+
+            ParseReferences();
 
             SetStartPosition();
         }
@@ -71,6 +76,36 @@ namespace YaNet
 
             _marks[^1] = new Mark(start, _buffer.Length - 1);
             _indents[^1] = Indent(_marks[^1]);
+        }
+
+        public void ParseReferences()
+        {
+            Mark[][] references = new Mark[_marks.Length][];
+
+            for (int i = 0; i < _marks.Length; i++)
+            {
+                references[i] = DetectReferences(_marks[i]);
+            }
+        }
+
+        public Mark[] DetectReferences(Mark mark)
+        {
+            List<Mark> references = new List<Mark>();
+
+            int start = IndexOf(mark, _startReference);
+            int end = IndexOf(mark, _endReference);
+
+            while (start != -1 && end != -1)
+            {
+                references.Add(new Mark(start + _startReference.Length, end - 1));
+
+                Mark biasMark = new Mark(end + 1, mark.End);
+
+                start = IndexOf(biasMark, _startReference);
+                end = IndexOf(biasMark, _endReference);
+            }
+            
+            return references.ToArray();
         }
 
         public Pair ToPair()
@@ -281,6 +316,8 @@ namespace YaNet
 
         public string Buffer() => _buffer.ToString(_currentMark.Start, _currentMark.Length);
 
+        public string Buffer(Mark mark) => _buffer.ToString(mark.Start, mark.Length);
+
         private int IndexOf(Mark mark, char symbol)
         {
             for (int i = mark.Start; i <= mark.End; i++)
@@ -296,10 +333,12 @@ namespace YaNet
         private int IndexOf(Mark mark, string substring)
         {
             if (mark.Length == 0 || substring.Length == 0)
-                throw new Exception("Characters is empty.");
+                return -1;
+                // throw new Exception("Characters is empty.");
 
             if (mark.Length < substring.Length)
-                throw new Exception("Length buffer less than length substring.");
+                return -1;
+                // throw new Exception("Length buffer less than length substring.");
 
             bool hasSubstring = true;
 

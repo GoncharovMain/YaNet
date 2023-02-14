@@ -15,7 +15,9 @@ namespace YaNet.Nodes
         {
             Marker marker = new Marker(buffer);
 
-            if (obj.GetType() == typeof(object[]))
+            Type type = obj.GetType();
+
+            if (type == typeof(object[]))
             {
                 object[] parameters = (object[])obj;
 
@@ -24,8 +26,6 @@ namespace YaNet.Nodes
 
                 return;
             }
-
-            Type type = obj.GetType();
 
             string propertyName = marker.Buffer(Key);
             string value = marker.Buffer(Value);

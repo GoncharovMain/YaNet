@@ -10,30 +10,49 @@ namespace YaNet.Samples
 
         public static string[] YamlRows => File.ReadAllLines(CurrentDirectory);
 
-        enum Week
+        public class References
         {
-            Monday,
-            Tuesday,
-            Wednesday,
-            Thursday,
-            Friday,
-            Saturday,
-            Sunday
+            public References()
+            {
+
+            }
+
+            public static string[] ParseCascade(string cascade)
+            {
+                char delimiterIndexesLeft = '[';
+                char delimiterIndexesRight = ']';
+                char delimiterNames = '.';
+
+                return cascade.Split(new char[] { delimiterIndexesLeft, delimiterIndexesRight, delimiterNames }, 
+                    StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            }
         }
 
         public static void Main()
         {
             //string path = Directory.GetCurrentDirectory() + "/ex2.yanet";
-            string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex2.yanet";
+            string path = "C:\\Users\\yuriy.goncharov\\Desktop\\YaNet\\YaNet.Samples\\ex3.yaml";
 
             string yaml = File.ReadAllText(path);
 
 
-            Deserializer deserializer = new Deserializer(yaml);
+            string[] parsersCascade =
+            {
+                String.Join(':', References.ParseCascade("Requests.GoogleGet.Headers.UserAgent")),
+                String.Join(':', References.ParseCascade("Requests.GoogleGet.Headers[1].UserAgent")),
+                String.Join(':', References.ParseCascade("Requests. GoogleGet.Headers.1.UserAgent")),
+            };
 
-            //RequestData data = deserializer.Deserialize<RequestData>();
+            foreach (var cascade in parsersCascade)
+            {
+                Console.WriteLine($"'{cascade}'");
+            }
 
-            Data data = deserializer.Deserialize<Data>();
+            //Deserializer deserializer = new Deserializer(yaml);
+
+            ////RequestData data = deserializer.Deserialize<RequestData>();
+
+            //Data data = deserializer.Deserialize<Data>();
 
         }
     }
