@@ -1,7 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using static YaNet.Samples.Context.Headers;
-
-namespace YaNet.Samples.Context
+﻿namespace YaNet.Samples.Context
 {
     public class RequestData
     {
@@ -39,7 +36,7 @@ namespace YaNet.Samples.Context
             return new MimeType { Format = data[0].Trim(), Charset = data[1].Trim() };
         }
 
-        public static implicit operator string (MimeType type)
+        public static implicit operator string(MimeType type)
         {
             return $"{type.Format}; {type.Charset}";
         }

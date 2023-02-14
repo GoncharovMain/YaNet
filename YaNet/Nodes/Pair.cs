@@ -32,6 +32,18 @@ namespace YaNet.Nodes
 
             PropertyInfo property = type.GetProperty(propertyName);
 
+            if (property.PropertyType.IsEnum)
+            {
+                if (!Enum.TryParse(property.PropertyType, value, false, out var enumElement))
+                {
+                    throw new Exception($"Enum '{property.PropertyType.Name}' has not element '{value}'.");
+                }
+
+                property.SetValue(obj, enumElement);
+
+                return;
+            }
+
             property.SetValue(obj, Instancer.ToConvert(property.PropertyType, value));
         }
 

@@ -40,7 +40,7 @@ namespace YaNet.Samples.Context
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public int Age { get; set; }
-        public string Sex { get; set; }
+        public Sex Sex { get; set; }
     }
 
     public class Address

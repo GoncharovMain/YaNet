@@ -47,6 +47,7 @@ namespace YaNet
 
             return true;
         }
+
         public void Reset()
         {
             _currentPosition = new int[_rankLengths.Length];
@@ -65,7 +66,9 @@ namespace YaNet
         }
 
         public static implicit operator RankPosition(int[] rank) => new RankPosition(rank);
+
         public static implicit operator int[](RankPosition rankPosition) => rankPosition._currentPosition;
+
         public static implicit operator String(RankPosition rankPosition) => rankPosition.ToString();
 
         public override string ToString() => $"[{String.Join(", ", _currentPosition)}]";
